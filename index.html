@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel School Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F2;
+  --surface: #FFFFFF;
+  --surface-alt: #EFECE8;
+  --border: #E0DBD3;
+  --text: #2C2A26;
+  --text-muted: #8A8580;
+  --text-light: #B5B0A8;
+  --accent: #D4622B;
+  --accent-hover: #B8521F;
+  --accent-light: #FEF0E8;
+  --green: #3D8B5A;
+  --green-light: #E5F3EB;
+  --blue: #3B72A4;
+  --blue-light: #E4F0FA;
+  --purple: #6B50A0;
+  --purple-light: #EDEBF6;
+  --red: #C04840;
+  --red-light: #FCEDEC;
+  --yellow: #C49A2D;
+  --yellow-light: #FDF5E0;
+  --teal: #2E8B8B;
+  --teal-light: #E2F3F3;
+  --shadow-sm: 0 1px 2px rgba(44,42,38,0.05);
+  --shadow-md: 0 4px 16px rgba(44,42,38,0.08);
+  --shadow-lg: 0 12px 40px rgba(44,42,38,0.12);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.header-brand { display: flex; align-items: center; gap: 12px; }
+.header-brand .logo {
+  width: 36px; height: 36px; background: var(--accent);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 700; font-size: 16px;
+}
+.header-brand h1 {
+  font-family: 'Fraunces', serif; font-size: 20px; font-weight: 500; letter-spacing: -0.3px;
+}
+.header-actions { display: flex; align-items: center; gap: 10px; }
+
+/* ── Sync Status ── */
+.sync-status {
+  font-size: 11px; padding: 5px 12px; border-radius: 20px; display: flex;
+  align-items: center; gap: 6px;
+}
+.sync-status.connected { background: var(--green-light); color: var(--green); }
+.sync-status.local { background: var(--yellow-light); color: var(--yellow); }
+.sync-status.syncing { background: var(--blue-light); color: var(--blue); }
+.sync-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: currentColor;
+}
+.sync-status.syncing .sync-dot { animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.btn {
+  padding: 9px 18px; border-radius: var(--radius-xs);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; transition: all 0.15s;
+}
+.btn-accent { background: var(--accent); color: white; }
+.btn-accent:hover { background: var(--accent-hover); }
+.btn-ghost { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--border); }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* ── Child Switcher ── */
+.child-switcher { display: flex; gap: 6px; padding: 12px 32px 0; }
+.child-btn {
+  padding: 8px 20px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--surface); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+  color: var(--text-muted);
+}
+.child-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+.child-btn:hover:not(.active) { background: var(--surface-alt); }
+
+/* ── Dashboard ── */
+#dashboard { padding: 24px 32px; max-width: 1200px; margin: 0 auto; }
+
+.student-header {
+  display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;
+}
+.student-header h2 { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 500; }
+.student-header .subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.last-synced {
+  font-size: 12px; color: var(--text-light); background: var(--surface-alt);
+  padding: 6px 12px; border-radius: 20px;
+}
+
+/* ── Summary Cards ── */
+.summary-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+.summary-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.summary-card .label { font-size: 12px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.summary-card .value { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 500; }
+.summary-card .detail { font-size: 12px; color: var(--text-muted); }
+.summary-card .mini-bar { height: 6px; background: var(--surface-alt); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.summary-card .mini-bar .fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+.summary-card.overall .value { color: var(--accent); }
+.summary-card.completed .value { color: var(--green); }
+.summary-card.remaining .value { color: var(--blue); }
+.summary-card.gpa .value { color: var(--purple); }
+
+/* ── Section Header ── */
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.section-header h3 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 500; }
+
+/* ── Course Grid ── */
+.course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.course-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  cursor: pointer; transition: all 0.2s;
+}
+.course-card:hover { box-shadow: var(--shadow-md); border-color: transparent; transform: translateY(-2px); }
+.course-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.course-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.course-code { font-size: 12px; color: var(--text-muted); }
+.course-grade { text-align: right; }
+.grade-value { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 500; }
+.grade-label { font-size: 11px; color: var(--text-muted); }
+.grade-a { color: var(--green); } .grade-b { color: var(--blue); }
+.grade-c { color: var(--yellow); } .grade-d { color: var(--accent); } .grade-f { color: var(--red); }
+.course-card-progress { margin-bottom: 14px; }
+.progress-bar-bg { height: 8px; background: var(--surface-alt); border-radius: 4px; overflow: hidden; }
+.progress-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+.progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+.course-card-footer { display: flex; justify-content: space-between; align-items: center; }
+.footer-stat { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.status-badge { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; }
+.status-badge.in-progress { background: var(--blue-light); color: var(--blue); }
+.status-badge.completed { background: var(--green-light); color: var(--green); }
+
+/* ── Detail Panel ── */
+.detail-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.detail-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 24px; border-bottom: 1px solid var(--border);
+}
+.detail-header h3 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 500; }
+.detail-back {
+  font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--accent);
+  background: none; border: none; cursor: pointer; font-weight: 500;
+}
+.detail-back:hover { text-decoration: underline; }
+.section-group { margin-bottom: 0; }
+.section-title {
+  font-size: 13px; font-weight: 600; padding: 12px 24px;
+  color: var(--text-muted); background: var(--surface-alt);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Assignment Rows ── */
+.assignment-row {
+  display: grid; grid-template-columns: 36px 1fr 90px 60px 80px;
+  align-items: center; gap: 12px; padding: 12px 24px;
+  border-bottom: 1px solid var(--surface-alt); transition: background 0.1s;
+}
+.assignment-row:last-child { border-bottom: none; }
+.assignment-row:hover { background: var(--surface-alt); }
+.assignment-row.completed-row { opacity: 0.5; }
+
+.a-check {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid var(--border); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 12px; flex-shrink: 0; cursor: pointer;
+  transition: all 0.15s; user-select: none;
+}
+.a-check:hover { border-color: var(--green); background: var(--green-light); }
+.a-check.done { border-color: var(--green); background: var(--green); color: white; }
+.a-check.done:hover { background: var(--green-light); color: var(--green); }
+
+.a-name { font-size: 13px; font-weight: 500; }
+.a-score { font-size: 13px; text-align: right; }
+.a-score.graded { color: var(--text); font-weight: 600; }
+.a-score.ungraded { color: var(--text-light); }
+.a-outof { font-size: 12px; color: var(--text-muted); text-align: center; }
+.a-pct { font-size: 13px; text-align: right; font-weight: 600; }
+.a-pct.high { color: var(--green); } .a-pct.mid { color: var(--yellow); } .a-pct.low { color: var(--red); }
+
+/* ── Modals ── */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(44,42,38,0.45);
+  backdrop-filter: blur(5px); z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: all 0.2s;
+}
+.modal-bg.show { opacity: 1; visibility: visible; }
+.modal-box {
+  background: var(--surface); border-radius: 18px; padding: 32px;
+  width: 560px; max-width: 92vw; box-shadow: var(--shadow-lg);
+  transform: translateY(10px); transition: transform 0.2s;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-bg.show .modal-box { transform: translateY(0); }
+.modal-box h3 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 500; margin-bottom: 8px; }
+.modal-box p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+
+.drop-zone {
+  border: 2px dashed var(--border); border-radius: var(--radius);
+  padding: 40px 24px; text-align: center; cursor: pointer;
+  transition: all 0.2s; background: var(--surface-alt);
+}
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: var(--accent-light); }
+.drop-zone .icon { font-size: 36px; margin-bottom: 10px; }
+.drop-zone .main-text { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.drop-zone .sub-text { font-size: 12px; color: var(--text-muted); }
+
+.or-divider { text-align: center; padding: 16px 0; font-size: 12px; color: var(--text-light); }
+.paste-section textarea {
+  width: 100%; height: 100px; border: 1px solid var(--border);
+  border-radius: var(--radius-xs); padding: 12px; font-family: monospace;
+  font-size: 12px; resize: vertical; background: var(--surface-alt);
+}
+.modal-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
+
+/* ── Setup Wizard ── */
+.setup-wizard {
+  max-width: 600px; margin: 60px auto; padding: 0 24px;
+}
+.setup-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 40px; text-align: center;
+}
+.setup-card .icon { font-size: 56px; margin-bottom: 20px; }
+.setup-card h2 { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 500; margin-bottom: 12px; }
+.setup-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
+
+.setup-step {
+  background: var(--surface-alt); border-radius: var(--radius-sm);
+  padding: 20px; margin-bottom: 12px; text-align: left;
+}
+.setup-step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.setup-step-num {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--accent);
+  color: white; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; flex-shrink: 0;
+}
+.setup-step-title { font-size: 14px; font-weight: 600; }
+.setup-step p { font-size: 13px; color: var(--text-muted); margin: 0; padding-left: 40px; }
+
+.setup-input-group { margin: 20px 0; text-align: left; }
+.setup-input-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+.setup-input-group input {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--border);
+  border-radius: var(--radius-xs); font-family: 'DM Sans', sans-serif;
+  font-size: 14px; background: var(--surface-alt);
+}
+.setup-input-group input:focus { outline: none; border-color: var(--accent); }
+.setup-input-group .hint { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+
+.setup-status {
+  padding: 12px 16px; border-radius: var(--radius-xs); font-size: 13px;
+  margin: 16px 0; display: none;
+}
+.setup-status.success { display: block; background: var(--green-light); color: var(--green); }
+.setup-status.error { display: block; background: var(--red-light); color: var(--red); }
+.setup-status.info { display: block; background: var(--blue-light); color: var(--blue); }
+
+.steps-list { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.step-item { display: flex; gap: 14px; align-items: flex-start; }
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--accent); color: white; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; flex-shrink: 0;
+}
+.step-text { font-size: 13px; line-height: 1.5; }
+
+.empty-state {
+  text-align: center; padding: 60px 24px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+.empty-state h3 { font-family: 'Fraunces', serif; font-size: 22px; margin-bottom: 8px; }
+.empty-state p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
+
+/* ── Toast notifications ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 300;
+  background: var(--text); color: white; padding: 12px 20px;
+  border-radius: var(--radius-sm); font-size: 13px; font-weight: 500;
+  box-shadow: var(--shadow-lg); transform: translateY(80px);
+  opacity: 0; transition: all 0.3s ease;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .header { padding: 12px 16px; }
+  #dashboard, .setup-wizard { padding: 16px; }
+  .summary-row { grid-template-columns: repeat(2, 1fr); }
+  .course-grid { grid-template-columns: 1fr; }
+  .assignment-row { grid-template-columns: 36px 1fr 70px 50px 60px; gap: 8px; padding: 10px 16px; }
+  .header-actions .btn span.hide-mobile { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-brand">
+    <div class="logo">E</div>
+    <h1>Excel School Tracker</h1>
+  </div>
+  <div class="header-actions">
+    <div class="sync-status local" id="sync-status">
+      <div class="sync-dot"></div>
+      <span id="sync-label">Local Only</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="showScraperHelp()">❓ How to Sync</button>
+    <button class="btn btn-accent btn-sm" onclick="openImportModal()">📥 Import</button>
+  </div>
+</div>
+
+<!-- Child Switcher -->
+<div class="child-switcher" id="child-switcher"></div>
+
+<!-- Main Content -->
+<div id="dashboard"></div>
+
+<!-- Setup Wizard (shown when no Firebase config) -->
+<div id="setup-wizard" style="display:none">
+  <div class="setup-wizard">
+    <div class="setup-card">
+      <div class="icon">🔥</div>
+      <h2>Connect to Firebase</h2>
+      <p>Firebase is a free Google service that stores your data in the cloud so your whole family can access the tracker from any device. Follow these steps to set it up:</p>
+
+      <div class="setup-step">
+        <div class="setup-step-header">
+          <div class="setup-step-num">1</div>
+          <div class="setup-step-title">Create a Firebase project</div>
+        </div>
+        <p>Go to <strong>console.firebase.google.com</strong>, sign in with your Google account, and click <strong>"Create a project"</strong>. Name it something like "excel-tracker". Disable Google Analytics when asked (you don't need it).</p>
+      </div>
+
+      <div class="setup-step">
+        <div class="setup-step-header">
+          <div class="setup-step-num">2</div>
+          <div class="setup-step-title">Create a Realtime Database</div>
+        </div>
+        <p>In the left sidebar, click <strong>"Build" → "Realtime Database"</strong>. Click <strong>"Create Database"</strong>. Choose any location. Select <strong>"Start in test mode"</strong> (this lets your family read/write data without login).</p>
+      </div>
+
+      <div class="setup-step">
+        <div class="setup-step-header">
+          <div class="setup-step-num">3</div>
+          <div class="setup-step-title">Get your config</div>
+        </div>
+        <p>Click the <strong>⚙️ gear icon → "Project settings"</strong>. Scroll down to <strong>"Your apps"</strong> and click the <strong>&lt;/&gt; (Web)</strong> icon. Register an app (any name). Copy the <strong>databaseURL</strong> value — it looks like <code>https://your-project-default-rtdb.firebaseio.com</code></p>
+      </div>
+
+      <div class="setup-input-group">
+        <label>Paste your Firebase Database URL</label>
+        <input type="text" id="firebase-url-input" placeholder="https://your-project-default-rtdb.firebaseio.com">
+        <div class="hint">This is the databaseURL from your Firebase config. It ends in .firebaseio.com</div>
+      </div>
+
+      <div class="setup-status" id="setup-status"></div>
+
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
+        <button class="btn btn-accent" onclick="connectFirebase()">Connect Database</button>
+        <button class="btn btn-ghost" onclick="skipFirebase()">Skip — Use Local Storage</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Import Modal -->
+<div class="modal-bg" id="import-modal" onclick="if(event.target===this)closeImportModal()">
+  <div class="modal-box">
+    <h3>📥 Import Student Data</h3>
+    <p>Upload the JSON file exported from Learn Stage, or paste the JSON below.</p>
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <div class="icon">📄</div>
+      <div class="main-text">Drop JSON file here or click to browse</div>
+      <div class="sub-text">learnstage_StudentName_YYYY-MM-DD.json</div>
+    </div>
+    <input type="file" id="file-input" accept=".json" style="display:none" onchange="handleFileUpload(event)">
+    <div class="or-divider">— or paste JSON —</div>
+    <div class="paste-section">
+      <textarea id="paste-area" placeholder='Paste JSON here...'></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeImportModal()">Cancel</button>
+      <button class="btn btn-accent" onclick="importFromPaste()">Import</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scraper Help Modal -->
+<div class="modal-bg" id="scraper-modal" onclick="if(event.target===this)closeScraperModal()">
+  <div class="modal-box">
+    <h3>🔄 How to Sync from Learn Stage</h3>
+    <p>Follow these steps to export your child's assignment data:</p>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Log into Learn Stage</strong> at live.learnstage.com with your parent account. Navigate to a student's course view.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Open the browser console</strong> — press <strong>F12</strong> (or Cmd+Option+J on Mac) and click the Console tab.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Paste the scraper script</strong> and press Enter. Wait for it to click through all subjects and courses automatically.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>A JSON file will download automatically.</strong></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-text"><strong>Click "Import"</strong> above and upload that file here. Repeat for each child.</div>
+      </div>
+    </div>
+    <div class="modal-actions" style="margin-top:20px;">
+      <button class="btn btn-accent" onclick="closeScraperModal()">Got it!</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATABASE LAYER — Firebase or localStorage
+// ═══════════════════════════════════════════
+
+let firebaseUrl = localStorage.getItem('excelTracker_firebaseUrl') || '';
+let useFirebase = !!firebaseUrl;
+
+// ── Firebase REST API helpers ──
+async function fbGet(path) {
+  const res = await fetch(`${firebaseUrl}/${path}.json`);
+  if (!res.ok) throw new Error('Firebase read failed');
+  return await res.json();
+}
+
+async function fbSet(path, data) {
+  const res = await fetch(`${firebaseUrl}/${path}.json`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('Firebase write failed');
+  return await res.json();
+}
+
+// ── Unified data access ──
+async function loadAllStudents() {
+  if (useFirebase) {
+    try {
+      updateSyncStatus('syncing');
+      const data = await fbGet('students');
+      updateSyncStatus('connected');
+      return data ? Object.values(data) : [];
+    } catch (e) {
+      console.error('Firebase load failed, falling back to localStorage:', e);
+      updateSyncStatus('local');
+      useFirebase = false;
+      showToast('⚠️ Cloud sync failed — using local data');
+    }
+  }
+  return JSON.parse(localStorage.getItem('excelTracker_students')) || [];
+}
+
+async function saveAllStudents(students) {
+  // Always save locally as backup
+  localStorage.setItem('excelTracker_students', JSON.stringify(students));
+
+  if (useFirebase) {
+    try {
+      updateSyncStatus('syncing');
+      // Store by studentId for easy lookups
+      const fbData = {};
+      students.forEach(s => { fbData[s.studentId] = s; });
+      await fbSet('students', fbData);
+      updateSyncStatus('connected');
+    } catch (e) {
+      console.error('Firebase save failed:', e);
+      updateSyncStatus('local');
+      showToast('⚠️ Cloud save failed — saved locally');
+    }
+  }
+}
+
+function updateSyncStatus(status) {
+  const el = document.getElementById('sync-status');
+  const label = document.getElementById('sync-label');
+  el.className = 'sync-status ' + status;
+  if (status === 'connected') label.textContent = 'Cloud Synced';
+  else if (status === 'syncing') label.textContent = 'Syncing...';
+  else label.textContent = 'Local Only';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════
+// FIREBASE SETUP
+// ═══════════════════════════════════
+
+async function connectFirebase() {
+  const url = document.getElementById('firebase-url-input').value.trim();
+  const statusEl = document.getElementById('setup-status');
+
+  if (!url || !url.includes('firebaseio.com')) {
+    statusEl.className = 'setup-status error';
+    statusEl.textContent = '❌ That doesn\'t look like a Firebase URL. It should end in .firebaseio.com';
+    return;
+  }
+
+  statusEl.className = 'setup-status info';
+  statusEl.textContent = '⏳ Testing connection...';
+
+  try {
+    // Test the connection by trying to read
+    const res = await fetch(`${url}/test.json`);
+    if (!res.ok) throw new Error('Connection failed');
+
+    // Save the URL
+    firebaseUrl = url;
+    useFirebase = true;
+    localStorage.setItem('excelTracker_firebaseUrl', url);
+
+    // Migrate any existing local data to Firebase
+    const localData = JSON.parse(localStorage.getItem('excelTracker_students')) || [];
+    if (localData.length > 0) {
+      statusEl.className = 'setup-status info';
+      statusEl.textContent = '⏳ Uploading existing data to cloud...';
+      await saveAllStudents(localData);
+    }
+
+    statusEl.className = 'setup-status success';
+    statusEl.textContent = '✅ Connected! Redirecting...';
+
+    setTimeout(() => {
+      document.getElementById('setup-wizard').style.display = 'none';
+      init();
+    }, 1000);
+
+  } catch (e) {
+    statusEl.className = 'setup-status error';
+    statusEl.textContent = '❌ Could not connect. Make sure the URL is correct and the database rules allow read/write. Error: ' + e.message;
+  }
+}
+
+function skipFirebase() {
+  localStorage.setItem('excelTracker_skipFirebase', 'true');
+  document.getElementById('setup-wizard').style.display = 'none';
+  init();
+}
+
+function resetFirebaseConfig() {
+  localStorage.removeItem('excelTracker_firebaseUrl');
+  localStorage.removeItem('excelTracker_skipFirebase');
+  firebaseUrl = '';
+  useFirebase = false;
+  location.reload();
+}
+
+// ═══════════════════════════════════
+// APP STATE & LOGIC
+// ═══════════════════════════════════
+
+const COURSE_COLORS = [
+  { bg: '#E6F0FA', text: '#2B5E8C', bar: '#3B72A4' },
+  { bg: '#F0EBF8', text: '#5A3F82', bar: '#6B50A0' },
+  { bg: '#E8F5ED', text: '#2D6B42', bar: '#3D8B5A' },
+  { bg: '#FDF6E3', text: '#8B7020', bar: '#C49A2D' },
+  { bg: '#FEF0E8', text: '#9E5520', bar: '#D4622B' },
+  { bg: '#E2F3F3', text: '#1F6B6B', bar: '#2E8B8B' },
+  { bg: '#FCEDEC', text: '#8B302A', bar: '#C04840' },
+  { bg: '#F0F0F0', text: '#555555', bar: '#888888' },
+];
+
+let allStudents = [];
+let activeStudentIdx = 0;
+let detailCourseIdx = null;
+
+async function save() {
+  await saveAllStudents(allStudents);
+}
+
+// ── Toggle assignment ──
+async function toggleAssignment(courseIdx, sectionIdx, assignmentIdx) {
+  const student = allStudents[activeStudentIdx];
+  if (!student) return;
+  const assignment = student.courses[courseIdx]?.sections[sectionIdx]?.assignments[assignmentIdx];
+  if (!assignment) return;
+
+  assignment.completed = !assignment.completed;
+
+  // Recalculate summary
+  let totalAssignments = 0, completedAssignments = 0;
+  student.courses.forEach(c => {
+    (c.sections || []).forEach(s => {
+      (s.assignments || []).forEach(a => {
+        totalAssignments++;
+        if (a.completed) completedAssignments++;
+      });
+    });
+  });
+  student.summary = {
+    totalCourses: student.courses.length,
+    totalAssignments, completedAssignments,
+    remainingAssignments: totalAssignments - completedAssignments,
+    overallProgress: totalAssignments > 0 ? Math.round((completedAssignments / totalAssignments) * 100) : 0
+  };
+
+  await save();
+  renderDashboard();
+  showToast(assignment.completed ? '✅ Marked complete' : '↩️ Marked incomplete');
+}
+
+// ── Render Child Switcher ──
+function renderChildSwitcher() {
+  const el = document.getElementById('child-switcher');
+  if (allStudents.length === 0) { el.innerHTML = ''; return; }
+  el.innerHTML = allStudents.map((s, i) =>
+    `<button class="child-btn ${i === activeStudentIdx ? 'active' : ''}" onclick="switchStudent(${i})">${s.studentName}</button>`
+  ).join('');
+}
+
+function switchStudent(idx) {
+  activeStudentIdx = idx;
+  detailCourseIdx = null;
+  renderChildSwitcher();
+  renderDashboard();
+}
+
+// ── Helpers ──
+function gradeClass(g) { return g >= 90 ? 'grade-a' : g >= 80 ? 'grade-b' : g >= 70 ? 'grade-c' : g >= 60 ? 'grade-d' : 'grade-f'; }
+function gradeLetter(g) { return g >= 90 ? 'A' : g >= 80 ? 'B' : g >= 70 ? 'C' : g >= 60 ? 'D' : 'F'; }
+function pctClass(s) { if (!s) return ''; const n = parseFloat(s); return n >= 80 ? 'high' : n >= 60 ? 'mid' : 'low'; }
+
+// ── Dashboard ──
+function renderDashboard() {
+  const dash = document.getElementById('dashboard');
+  if (allStudents.length === 0) { dash.innerHTML = renderEmptyState(); return; }
+
+  const student = allStudents[activeStudentIdx];
+  if (!student) { dash.innerHTML = renderEmptyState(); return; }
+  const courses = student.courses || [];
+
+  let totalAssignments = 0, completedAssignments = 0, totalGradeSum = 0, gradedCourses = 0;
+  courses.forEach(c => {
+    if (c.currentGrade) { totalGradeSum += c.currentGrade; gradedCourses++; }
+    (c.sections || []).forEach(s => {
+      (s.assignments || []).forEach(a => { totalAssignments++; if (a.completed) completedAssignments++; });
+    });
+  });
+
+  const remaining = totalAssignments - completedAssignments;
+  const pct = totalAssignments > 0 ? Math.round((completedAssignments / totalAssignments) * 100) : 0;
+  const avgGrade = gradedCourses > 0 ? (totalGradeSum / gradedCourses).toFixed(1) : '—';
+  const syncDate = student.scrapedAt ? new Date(student.scrapedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'Never';
+
+  let html = `
+  <div class="student-header">
+    <div>
+      <h2>${student.studentName}'s Progress</h2>
+      <div class="subtitle">Student ID: ${student.studentId} · ${courses.length} Active Courses</div>
+    </div>
+    <div class="last-synced">🕐 Last synced: ${syncDate}</div>
+  </div>
+  <div class="summary-row">
+    <div class="summary-card overall">
+      <span class="label">Overall Progress</span>
+      <span class="value">${pct}%</span>
+      <div class="mini-bar"><div class="fill" style="width:${pct}%; background: var(--accent);"></div></div>
+      <span class="detail">${completedAssignments} of ${totalAssignments} assignments</span>
+    </div>
+    <div class="summary-card completed">
+      <span class="label">Completed</span>
+      <span class="value">${completedAssignments}</span>
+      <span class="detail">assignments finished</span>
+    </div>
+    <div class="summary-card remaining">
+      <span class="label">Remaining</span>
+      <span class="value">${remaining}</span>
+      <span class="detail">assignments to go</span>
+    </div>
+    <div class="summary-card gpa">
+      <span class="label">Avg Grade</span>
+      <span class="value">${avgGrade}</span>
+      <span class="detail">${gradedCourses > 0 ? gradeLetter(parseFloat(avgGrade)) + ' average' : 'No grades yet'}</span>
+    </div>
+  </div>`;
+
+  if (detailCourseIdx !== null && courses[detailCourseIdx]) {
+    html += renderCourseDetail(courses[detailCourseIdx], detailCourseIdx);
+  } else {
+    html += `<div class="section-header"><h3>Courses</h3></div><div class="course-grid">`;
+    courses.forEach((c, idx) => {
+      const color = COURSE_COLORS[idx % COURSE_COLORS.length];
+      let cTotal = 0, cDone = 0;
+      (c.sections || []).forEach(s => { (s.assignments || []).forEach(a => { cTotal++; if (a.completed) cDone++; }); });
+      const cPct = cTotal > 0 ? Math.round((cDone / cTotal) * 100) : 0;
+      const grade = c.currentGrade || 0;
+
+      html += `
+      <div class="course-card" onclick="openCourseDetail(${idx})">
+        <div class="course-card-top">
+          <div><div class="course-name">${c.name}</div><div class="course-code">${c.code || ''}</div></div>
+          <div class="course-grade">
+            <div class="grade-value ${gradeClass(grade)}">${grade || '—'}</div>
+            <div class="grade-label">Current Grade</div>
+          </div>
+        </div>
+        <div class="course-card-progress">
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${cPct}%; background: ${color.bar};"></div></div>
+          <div class="progress-meta"><span>${cDone} of ${cTotal} done</span><span style="font-weight:600;">${cPct}%</span></div>
+        </div>
+        <div class="course-card-footer">
+          <div class="footer-stat"><span class="dot" style="background:${color.bar};"></span>${c.moduleProgress || '—'} modules</div>
+          <span class="status-badge ${c.status === 'In Progress' ? 'in-progress' : 'completed'}">${c.status || 'In Progress'}</span>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  dash.innerHTML = html;
+}
+
+// ── Course Detail ──
+function renderCourseDetail(course, courseIdx) {
+  let html = `
+  <div class="detail-panel">
+    <div class="detail-header">
+      <h3>${course.name}</h3>
+      <button class="detail-back" onclick="closeCourseDetail()">← Back to Courses</button>
+    </div>`;
+
+  (course.sections || []).forEach((section, sectionIdx) => {
+    const secDone = section.assignments.filter(a => a.completed).length;
+    html += `<div class="section-group">
+      <div class="section-title">${section.name} (${secDone}/${section.assignments.length})</div>`;
+
+    (section.assignments || []).forEach((a, assignmentIdx) => {
+      const done = a.completed;
+      const scoreStr = done ? a.receivedPoints : '—';
+      const pctStr = a.percentage ? a.percentage.replace('%','').trim() : '';
+      const pctDisplay = pctStr ? pctStr + '%' : '—';
+
+      html += `
+      <div class="assignment-row ${done ? 'completed-row' : ''}">
+        <div class="a-check ${done ? 'done' : ''}" onclick="event.stopPropagation(); toggleAssignment(${courseIdx}, ${sectionIdx}, ${assignmentIdx})" title="Click to mark ${done ? 'incomplete' : 'complete'}">${done ? '✓' : ''}</div>
+        <div class="a-name">${a.name}</div>
+        <div class="a-score ${done ? 'graded' : 'ungraded'}">${scoreStr}</div>
+        <div class="a-outof">/ ${a.outOf || '?'}</div>
+        <div class="a-pct ${pctClass(pctStr)}">${pctDisplay}</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+
+  html += '</div>';
+  return html;
+}
+
+function openCourseDetail(idx) { detailCourseIdx = idx; renderDashboard(); window.scrollTo({ top: 200, behavior: 'smooth' }); }
+function closeCourseDetail() { detailCourseIdx = null; renderDashboard(); }
+
+// ── Empty State ──
+function renderEmptyState() {
+  return `
+  <div class="empty-state">
+    <div class="icon">🎓</div>
+    <h3>Welcome to Excel School Tracker</h3>
+    <p>Import your kids' assignment data from Learn Stage to get started.</p>
+    <div style="margin-top: 16px; display:flex; gap:10px; justify-content:center;">
+      <button class="btn btn-accent" onclick="openImportModal()">📥 Import Data</button>
+      <button class="btn btn-ghost" onclick="loadDemoData()">Try Demo Data</button>
+    </div>
+    ${useFirebase ? '' : '<p style="margin-top:16px; font-size:12px;"><a href="#" onclick="resetFirebaseConfig(); return false;" style="color:var(--accent);">Set up cloud sync</a> so your whole family can see the tracker.</p>'}
+  </div>`;
+}
+
+// ── Import ──
+function openImportModal() { document.getElementById('import-modal').classList.add('show'); }
+function closeImportModal() { document.getElementById('import-modal').classList.remove('show'); document.getElementById('paste-area').value = ''; }
+function showScraperHelp() { document.getElementById('scraper-modal').classList.add('show'); }
+function closeScraperModal() { document.getElementById('scraper-modal').classList.remove('show'); }
+
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try { importStudentData(JSON.parse(e.target.result)); }
+    catch (err) { alert('Error reading file: ' + err.message); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function importFromPaste() {
+  const text = document.getElementById('paste-area').value.trim();
+  if (!text) return;
+  try { importStudentData(JSON.parse(text)); }
+  catch (err) { alert('Invalid JSON: ' + err.message); }
+}
+
+async function importStudentData(data) {
+  const existingIdx = allStudents.findIndex(s => s.studentId === data.studentId);
+  if (existingIdx >= 0) {
+    // Preserve manual completion overrides where scraper shows incomplete but user marked complete
+    const existing = allStudents[existingIdx];
+    data.courses.forEach(newCourse => {
+      const oldCourse = existing.courses.find(c => c.name === newCourse.name);
+      if (!oldCourse) return;
+      newCourse.sections.forEach(newSec => {
+        const oldSec = oldCourse.sections.find(s => s.name === newSec.name);
+        if (!oldSec) return;
+        newSec.assignments.forEach(newA => {
+          const oldA = oldSec.assignments.find(a => a.name === newA.name);
+          if (oldA && oldA.completed && !newA.completed) {
+            // Keep the user's manual completion if scraper doesn't show it as done
+            newA.completed = true;
+            newA._manuallyCompleted = true;
+          }
+        });
+      });
+    });
+
+    allStudents[existingIdx] = data;
+    activeStudentIdx = existingIdx;
+  } else {
+    allStudents.push(data);
+    activeStudentIdx = allStudents.length - 1;
+  }
+  await save();
+  closeImportModal();
+  renderChildSwitcher();
+  renderDashboard();
+  showToast(`✅ Imported ${data.studentName}'s data`);
+}
+
+// ── Drag & Drop ──
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try { importStudentData(JSON.parse(ev.target.result)); }
+      catch (err) { alert('Error: ' + err.message); }
+    };
+    reader.readAsText(file);
+  }
+});
+
+// ── Demo Data ──
+function loadDemoData() {
+  const demo = {
+    studentName: "Peyton", studentId: "EHS-2024-001", scrapedAt: new Date().toISOString(),
+    courses: [
+      { name: "English 09", code: "ENG-09", subject: "ENGLISH", status: "In Progress", currentGrade: 85, moduleProgress: "5/10",
+        sections: [
+          { name: "Quizzes", assignments: [
+            { name: "Grammar Quiz 1", receivedPoints: 18, outOf: 20, percentage: "90%", completed: true },
+            { name: "Vocabulary Quiz 1", receivedPoints: 16, outOf: 20, percentage: "80%", completed: true },
+            { name: "Grammar Quiz 2", receivedPoints: 17, outOf: 20, percentage: "85%", completed: true },
+            { name: "Vocabulary Quiz 2", receivedPoints: null, outOf: 20, percentage: null, completed: false },
+          ]},
+          { name: "Writing Assignments", assignments: [
+            { name: "Personal Narrative Essay", receivedPoints: 42, outOf: 50, percentage: "84%", completed: true },
+            { name: "Persuasive Essay", receivedPoints: 38, outOf: 50, percentage: "76%", completed: true },
+            { name: "Research Paper", receivedPoints: null, outOf: 100, percentage: null, completed: false },
+          ]},
+          { name: "Exams", assignments: [
+            { name: "Midterm Exam", receivedPoints: 78, outOf: 100, percentage: "78%", completed: true },
+            { name: "Final Exam", receivedPoints: null, outOf: 100, percentage: null, completed: false },
+          ]},
+        ]},
+      { name: "Algebra 1", code: "MATH-ALG1", subject: "MATH", status: "In Progress", currentGrade: 92, moduleProgress: "6/10",
+        sections: [
+          { name: "Quizzes", assignments: [
+            { name: "Linear Equations", receivedPoints: 19, outOf: 20, percentage: "95%", completed: true },
+            { name: "Inequalities", receivedPoints: 18, outOf: 20, percentage: "90%", completed: true },
+            { name: "Systems of Equations", receivedPoints: 20, outOf: 20, percentage: "100%", completed: true },
+            { name: "Polynomials", receivedPoints: 17, outOf: 20, percentage: "85%", completed: true },
+            { name: "Factoring Quiz", receivedPoints: null, outOf: 20, percentage: null, completed: false },
+          ]},
+          { name: "Homework", assignments: [
+            { name: "Ch 1 Problems", receivedPoints: 48, outOf: 50, percentage: "96%", completed: true },
+            { name: "Ch 2 Problems", receivedPoints: 45, outOf: 50, percentage: "90%", completed: true },
+            { name: "Ch 3 Problems", receivedPoints: null, outOf: 50, percentage: null, completed: false },
+          ]},
+          { name: "Exams", assignments: [
+            { name: "Midterm", receivedPoints: 88, outOf: 100, percentage: "88%", completed: true },
+            { name: "Final", receivedPoints: null, outOf: 100, percentage: null, completed: false },
+          ]},
+        ]},
+      { name: "Earth And Space Science", code: "SCI-ESS", subject: "SCIENCE", status: "In Progress", currentGrade: 78, moduleProgress: "4/10",
+        sections: [
+          { name: "Quizzes", assignments: [
+            { name: "Plate Tectonics", receivedPoints: 15, outOf: 20, percentage: "75%", completed: true },
+            { name: "Weather Systems", receivedPoints: 16, outOf: 20, percentage: "80%", completed: true },
+            { name: "Astronomy Quiz", receivedPoints: null, outOf: 20, percentage: null, completed: false },
+          ]},
+          { name: "Labs", assignments: [
+            { name: "Rock ID Lab", receivedPoints: 40, outOf: 50, percentage: "80%", completed: true },
+            { name: "Star Chart Lab", receivedPoints: null, outOf: 50, percentage: null, completed: false },
+          ]},
+          { name: "Exams", assignments: [
+            { name: "Midterm", receivedPoints: 72, outOf: 100, percentage: "72%", completed: true },
+            { name: "Final", receivedPoints: null, outOf: 100, percentage: null, completed: false },
+          ]},
+        ]},
+      { name: "World History", code: "SS-WH", subject: "SOCIAL STUDIES", status: "In Progress", currentGrade: 88, moduleProgress: "5/10",
+        sections: [
+          { name: "Quizzes", assignments: [
+            { name: "Ancient Civilizations", receivedPoints: 18, outOf: 20, percentage: "90%", completed: true },
+            { name: "Medieval Europe", receivedPoints: 17, outOf: 20, percentage: "85%", completed: true },
+            { name: "Enlightenment Quiz", receivedPoints: null, outOf: 20, percentage: null, completed: false },
+          ]},
+          { name: "Essays", assignments: [
+            { name: "Civilization Comparison", receivedPoints: 43, outOf: 50, percentage: "86%", completed: true },
+            { name: "Cause & Effect Essay", receivedPoints: null, outOf: 50, percentage: null, completed: false },
+          ]},
+          { name: "Exams", assignments: [
+            { name: "Midterm", receivedPoints: 85, outOf: 100, percentage: "85%", completed: true },
+            { name: "Final", receivedPoints: null, outOf: 100, percentage: null, completed: false },
+          ]},
+        ]},
+    ]
+  };
+  importStudentData(demo);
+}
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
+async function init() {
+  allStudents = await loadAllStudents();
+  renderChildSwitcher();
+  renderDashboard();
+}
+
+// Check if we need to show setup wizard
+if (!firebaseUrl && !localStorage.getItem('excelTracker_skipFirebase')) {
+  document.getElementById('setup-wizard').style.display = 'block';
+  // Also init in background with local data
+  init();
+} else {
+  init();
+}
+</script>
+</body>
+</html>
