@@ -3,723 +3,932 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Logan's Planner — Excel High School</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>Excel High School — Family Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0d0f14;
-    --surface: #161920;
-    --surface2: #1e2229;
-    --border: #2a2f3a;
-    --accent: #6c8fff;
-    --accent2: #a78bfa;
-    --green: #34d399;
-    --yellow: #fbbf24;
-    --red: #f87171;
-    --pink: #f472b6;
-    --text: #e8eaf0;
-    --muted: #6b7280;
-    --radius: 12px;
-  }
+/* ═══════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════ */
+:root {
+  --bg: #0d0f14;
+  --surface: #161920;
+  --surface2: #1e2229;
+  --surface3: #252b35;
+  --border: #2a2f3a;
+  --accent: #6c8fff;
+  --accent2: #a78bfa;
+  --green: #34d399;
+  --yellow: #fbbf24;
+  --red: #f87171;
+  --pink: #f472b6;
+  --text: #e8eaf0;
+  --muted: #6b7280;
+  --radius: 12px;
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* subject colors */
+  --c-eng:  #6c8fff;
+  --c-math: #a78bfa;
+  --c-sci:  #34d399;
+  --c-ss:   #fbbf24;
+  --c-elec: #f472b6;
+  --c-other:#94a3b8;
+}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+a { color: inherit; text-decoration: none; }
 
-  /* ── TOP NAV ── */
-  .topnav {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: 56px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .topnav-logo {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: -0.5px;
-    margin-right: 12px;
-  }
-  .topnav-tabs {
-    display: flex;
-    gap: 2px;
-    flex: 1;
-  }
-  .topnav-tab {
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--muted);
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .topnav-tab:hover { color: var(--text); background: var(--surface2); }
-  .topnav-tab.active { color: var(--text); background: var(--surface2); }
-  .topnav-tab.active-main { color: var(--accent); background: rgba(108,143,255,0.1); }
-  .topnav-right { display: flex; gap: 8px; margin-left: auto; }
-  .btn {
-    padding: 7px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: inherit;
-  }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:hover { background: #5a7ef0; }
-  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
-  .btn-sm { padding: 4px 10px; font-size: 12px; }
-  .btn-danger { background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
-  .btn-danger:hover { background: rgba(248,113,113,0.25); }
+/* ═══════════════════════════════════════════════
+   TOP NAV
+═══════════════════════════════════════════════ */
+.topnav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav-logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+  margin-right: 16px;
+  white-space: nowrap;
+}
+.nav-tab {
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  transition: all .15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.nav-tab:hover { color: var(--text); background: var(--surface2); }
+.nav-tab.active { color: var(--accent); background: rgba(108,143,255,.12); }
+.nav-sep { width: 1px; height: 20px; background: var(--border); margin: 0 8px; }
+.nav-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.cloud-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+.cloud-badge.ok   { background: rgba(52,211,153,.15); color: var(--green); }
+.cloud-badge.warn { background: rgba(251,191,36,.15);  color: var(--yellow); }
+.cloud-badge.err  { background: rgba(248,113,113,.15); color: var(--red); }
 
-  /* ── LAYOUT ── */
-  .layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    min-height: calc(100vh - 56px);
-  }
+/* ═══════════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════════ */
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary  { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #5a7ef0; }
+.btn-ghost    { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+.btn-danger   { background: rgba(248,113,113,.15); color: var(--red); border: 1px solid rgba(248,113,113,.3); }
+.btn-danger:hover { background: rgba(248,113,113,.25); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-xs { padding: 3px 9px; font-size: 11px; }
 
-  /* ── SIDEBAR ── */
-  .sidebar {
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    padding: 20px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  .sidebar-section-label {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1.2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .sidebar-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13.5px;
-    font-weight: 500;
-    color: var(--muted);
-    transition: all 0.15s;
-    border: none;
-    background: transparent;
-    width: 100%;
-    text-align: left;
-  }
-  .sidebar-nav-item:hover { color: var(--text); background: var(--surface2); }
-  .sidebar-nav-item.active { color: var(--text); background: var(--surface2); }
-  .sidebar-nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
-  .sidebar-nav-item .nav-badge {
-    margin-left: auto;
-    background: var(--accent);
-    color: #fff;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 10px;
-  }
-  .sidebar-nav-item .nav-badge.warn { background: var(--yellow); color: #1a1500; }
-  .sidebar-nav-item .nav-badge.danger { background: var(--red); color: #fff; }
+/* ═══════════════════════════════════════════════
+   PAGE SWITCHING
+═══════════════════════════════════════════════ */
+.page { display: none; }
+.page.active { display: block; }
 
-  /* subject color pills */
-  .subject-list { display: flex; flex-direction: column; gap: 4px; }
-  .subject-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 12.5px;
-    font-weight: 500;
-    color: var(--muted);
-    cursor: default;
-  }
-  .subject-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+/* ═══════════════════════════════════════════════
+   LAYOUT — sidebar + content
+═══════════════════════════════════════════════ */
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - 56px);
+}
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+.sb-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  transition: all .15s;
+  font-family: inherit;
+}
+.sb-item:hover { color: var(--text); background: var(--surface2); }
+.sb-item.active { color: var(--text); background: var(--surface2); }
+.sb-item .ic { font-size: 15px; width: 18px; text-align: center; }
+.sb-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+}
+.sb-badge.warn { background: var(--yellow); color: #1a1500; }
+.sb-badge.danger { background: var(--red); }
+.subject-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-  /* ── MAIN CONTENT ── */
-  .main { padding: 24px; overflow-y: auto; }
-  .page { display: none; }
-  .page.active { display: block; }
+.main-content { padding: 24px; overflow-y: auto; }
 
-  /* ── SECTION HEADER ── */
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  .section-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
-  .section-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+/* ═══════════════════════════════════════════════
+   SECTION HEADERS
+═══════════════════════════════════════════════ */
+.sec-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+.sec-title { font-size: 20px; font-weight: 700; letter-spacing: -.3px; }
+.sec-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+.sec-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
 
-  /* ── WEEK CALENDAR ── */
-  .week-nav {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-  .week-nav-btn {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text);
-    cursor: pointer;
-    font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-  }
-  .week-nav-btn:hover { background: var(--surface2); }
-  .week-label { font-size: 14px; font-weight: 600; }
-  .today-btn {
-    padding: 4px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    font-size: 12px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.15s;
-  }
-  .today-btn:hover { color: var(--text); border-color: var(--muted); }
+/* ═══════════════════════════════════════════════
+   STAT CARDS
+═══════════════════════════════════════════════ */
+.stats-row {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stats-row-4 { grid-template-columns: repeat(4, 1fr); }
+.stats-row-3 { grid-template-columns: repeat(3, 1fr); }
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.stat-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.stat-label { font-size: 11px; color: var(--muted); margin-top: 5px; text-transform: uppercase; letter-spacing: .5px; }
+.stat-sub   { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
-  .week-grid {
-    display: grid;
-    grid-template-columns: 60px repeat(5, 1fr);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--surface);
-  }
-  .cal-day-header {
-    padding: 12px 8px;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface2);
-  }
-  .cal-day-header.time-col { background: var(--surface2); }
-  .cal-day-name { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: var(--muted); text-transform: uppercase; }
-  .cal-day-num {
-    font-size: 20px;
-    font-weight: 700;
-    font-family: 'Space Mono', monospace;
-    margin-top: 2px;
-    color: var(--text);
-  }
-  .cal-day-num.today {
-    color: #fff;
-    background: var(--accent);
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin: 2px auto 0;
-    font-size: 16px;
-  }
+/* ═══════════════════════════════════════════════
+   DASHBOARD — GRADE TRACKER
+═══════════════════════════════════════════════ */
+.student-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+.student-tab {
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+.student-tab:hover { color: var(--text); border-color: var(--muted); }
+.student-tab.active { color: var(--accent); border-color: var(--accent); background: rgba(108,143,255,.08); }
 
-  .cal-body { display: contents; }
-  .cal-time-cell {
-    border-bottom: 1px solid var(--border);
-    padding: 4px 8px;
-    text-align: right;
-    font-size: 10px;
-    font-family: 'Space Mono', monospace;
-    color: var(--muted);
-    background: var(--surface2);
-    line-height: 1;
-    vertical-align: top;
-    height: 50px;
-  }
-  .cal-cell {
-    border-bottom: 1px solid var(--border);
-    border-left: 1px solid var(--border);
-    position: relative;
-    height: 50px;
-    padding: 2px;
-  }
-  .cal-cell:last-child { border-bottom: none; }
+.import-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(108,143,255,.08);
+  border: 1px solid rgba(108,143,255,.25);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+.import-strip .is-icon { font-size: 18px; }
+.import-strip .is-text { flex: 1; }
+.import-strip .is-title { font-weight: 600; }
+.import-strip .is-sub   { color: var(--muted); font-size: 12px; }
 
-  .cal-event {
-    position: absolute;
-    left: 3px; right: 3px;
-    border-radius: 6px;
-    padding: 4px 6px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: default;
-    overflow: hidden;
-    z-index: 1;
-    line-height: 1.2;
-  }
-  .cal-event-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cal-event-time { font-size: 10px; opacity: 0.7; font-weight: 400; }
+/* Course cards */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+.course-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  cursor: pointer;
+  transition: border-color .15s, transform .15s;
+  position: relative;
+  overflow: hidden;
+}
+.course-card:hover { border-color: var(--muted); transform: translateY(-1px); }
+.course-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.course-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+.course-code { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+.course-grade { text-align: right; }
+.grade-val { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; }
+.grade-label { font-size: 10px; color: var(--muted); }
+.grade-A { color: var(--green); }
+.grade-B { color: var(--accent); }
+.grade-C { color: var(--yellow); }
+.grade-D, .grade-F { color: var(--red); }
+.grade-NA { color: var(--muted); }
 
-  /* ── ASSIGNMENTS ── */
-  .filters {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
-  .filter-chip {
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.15s;
-  }
-  .filter-chip:hover { color: var(--text); border-color: var(--muted); }
-  .filter-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.progress-bg { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width .4s; }
+.progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+.progress-meta span:last-child { font-weight: 600; color: var(--text); }
 
-  .assignment-list { display: flex; flex-direction: column; gap: 8px; }
-  .assignment-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: border-color 0.15s;
-  }
-  .assignment-card:hover { border-color: var(--muted); }
-  .assignment-card.completed { opacity: 0.5; }
-  .assignment-card.completed .a-name { text-decoration: line-through; }
+.course-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+.subject-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.remaining-badge {
+  font-size: 11px;
+  color: var(--muted);
+}
 
-  .a-check {
-    width: 20px; height: 20px;
-    border-radius: 6px;
-    border: 2px solid var(--border);
-    cursor: pointer;
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-    background: transparent;
-  }
-  .a-check:hover { border-color: var(--accent); }
-  .a-check.checked { background: var(--green); border-color: var(--green); }
-  .a-check.checked::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 700; }
+/* Course detail */
+.detail-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.detail-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface2);
+}
+.detail-title { font-size: 17px; font-weight: 700; }
+.section-group { border-bottom: 1px solid var(--border); }
+.section-group:last-child { border-bottom: none; }
+.section-name {
+  padding: 10px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--surface2);
+  display: flex;
+  justify-content: space-between;
+}
+.assignment-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 60px 40px 60px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-bottom: 1px solid rgba(42,47,58,.5);
+  transition: background .1s;
+}
+.assignment-row:last-child { border-bottom: none; }
+.assignment-row:hover { background: var(--surface2); }
+.assignment-row.done-row { opacity: .55; }
+.assignment-row.done-row .a-name { text-decoration: line-through; }
+.a-check {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.a-check:hover { border-color: var(--accent); }
+.a-check.checked { background: var(--green); border-color: var(--green); color: #fff; }
+.a-name { font-size: 13px; }
+.a-score { font-family: 'Space Mono', monospace; font-size: 12px; text-align: right; }
+.a-outof { font-size: 11px; color: var(--muted); }
+.a-pct { font-size: 12px; font-weight: 600; text-align: right; }
+.pct-A { color: var(--green); }
+.pct-B { color: var(--accent); }
+.pct-C { color: var(--yellow); }
+.pct-D, .pct-F { color: var(--red); }
+.pct-NA { color: var(--muted); }
 
-  .a-info { flex: 1; min-width: 0; }
-  .a-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .a-meta { font-size: 12px; color: var(--muted); margin-top: 2px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+/* ═══════════════════════════════════════════════
+   PLANNER PAGES (schedule, assignments, exams)
+═══════════════════════════════════════════════ */
 
-  .a-subject-tag {
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-  }
-  .due-badge {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 4px;
-  }
-  .due-overdue { background: rgba(248,113,113,0.15); color: var(--red); }
-  .due-soon { background: rgba(251,191,36,0.15); color: var(--yellow); }
-  .due-ok { background: rgba(52,211,153,0.15); color: var(--green); }
+/* Week calendar */
+.week-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.wn-btn {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.wn-btn:hover { background: var(--surface2); }
+.wn-label { font-size: 14px; font-weight: 600; }
+.today-btn {
+  padding: 4px 12px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+.today-btn:hover { color: var(--text); border-color: var(--muted); }
 
-  .a-actions { display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s; }
-  .assignment-card:hover .a-actions { opacity: 1; }
+.week-grid {
+  display: grid;
+  grid-template-columns: 56px repeat(5,1fr);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+  margin-bottom: 20px;
+}
+.cal-head {
+  padding: 10px 6px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.cal-head.tc { /* time col */ }
+.cal-day-name { font-size: 10px; font-weight: 700; letter-spacing: .5px; color: var(--muted); text-transform: uppercase; }
+.cal-day-num  { font-size: 18px; font-weight: 700; font-family: 'Space Mono', monospace; margin-top: 2px; }
+.cal-day-num.today-num {
+  background: var(--accent);
+  color: #fff;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 2px auto 0;
+  font-size: 14px;
+}
+.cal-time { border-bottom: 1px solid var(--border); height: 50px; padding: 4px 6px; text-align: right; font-size: 9px; font-family: 'Space Mono', monospace; color: var(--muted); background: var(--surface2); }
+.cal-cell  { border-bottom: 1px solid var(--border); border-left: 1px solid var(--border); height: 50px; position: relative; padding: 2px; }
+.cal-event {
+  position: absolute; left: 3px; right: 3px;
+  border-radius: 5px;
+  padding: 3px 5px;
+  font-size: 10px; font-weight: 600;
+  overflow: hidden; z-index: 1; line-height: 1.3;
+  cursor: default;
+}
+.cal-event-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-event-time { font-size: 9px; opacity: .7; font-weight: 400; }
 
-  /* ── EXAMS ── */
-  .exams-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 12px;
-  }
-  .exam-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.15s, transform 0.15s;
-  }
-  .exam-card:hover { border-color: var(--muted); transform: translateY(-1px); }
-  .exam-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .exam-countdown {
-    font-family: 'Space Mono', monospace;
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 1;
-    margin: 8px 0 4px;
-  }
-  .exam-countdown.urgent { color: var(--red); }
-  .exam-countdown.warn { color: var(--yellow); }
-  .exam-countdown.ok { color: var(--green); }
-  .exam-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-  .exam-subject { font-size: 12px; color: var(--muted); }
-  .exam-date { font-size: 12px; color: var(--muted); margin-top: 8px; }
-  .exam-actions { display: flex; gap: 6px; margin-top: 12px; opacity: 0; transition: opacity 0.15s; }
-  .exam-card:hover .exam-actions { opacity: 1; }
+/* Schedule legend */
+.sched-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.leg-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--muted); }
+.leg-dot  { width: 9px; height: 9px; border-radius: 2px; }
 
-  /* ── STATS BAR ── */
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    text-align: center;
-  }
-  .stat-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1;
-  }
-  .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+/* Subject color classes */
+.sc-eng  { background: var(--c-eng);  }
+.sc-math { background: var(--c-math); }
+.sc-sci  { background: var(--c-sci);  }
+.sc-ss   { background: var(--c-ss);   }
+.sc-elec { background: var(--c-elec); }
+.sc-other{ background: var(--c-other);}
 
-  /* ── MODAL ── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px);
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px;
-    width: 100%;
-    max-width: 480px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
-  .form-group { margin-bottom: 14px; }
-  .form-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
-  .form-input {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 10px 12px;
-    font-size: 14px;
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .form-input:focus { border-color: var(--accent); }
-  .form-input option { background: var(--surface2); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+.tc-eng  { color: var(--c-eng);  }
+.tc-math { color: var(--c-math); }
+.tc-sci  { color: var(--c-sci);  }
+.tc-ss   { color: var(--c-ss);   }
+.tc-elec { color: var(--c-elec); }
+.tc-other{ color: var(--c-other);}
 
-  /* ── IMPORT BANNER ── */
-  .import-banner {
-    background: rgba(108,143,255,0.1);
-    border: 1px solid rgba(108,143,255,0.3);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    font-size: 13px;
-  }
-  .import-banner-icon { font-size: 20px; }
-  .import-banner-text { flex: 1; }
-  .import-banner-title { font-weight: 600; margin-bottom: 2px; }
-  .import-banner-sub { color: var(--muted); font-size: 12px; }
+.bc-eng  { background: rgba(108,143,255,.15); }
+.bc-math { background: rgba(167,139,250,.15); }
+.bc-sci  { background: rgba(52,211,153,.15);  }
+.bc-ss   { background: rgba(251,191,36,.15);  }
+.bc-elec { background: rgba(244,114,182,.15); }
+.bc-other{ background: rgba(148,163,184,.15); }
 
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--muted);
-  }
-  .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-state-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .empty-state-sub { font-size: 13px; }
+.brd-eng  { border-left: 3px solid var(--c-eng);  }
+.brd-math { border-left: 3px solid var(--c-math); }
+.brd-sci  { border-left: 3px solid var(--c-sci);  }
+.brd-ss   { border-left: 3px solid var(--c-ss);   }
+.brd-elec { border-left: 3px solid var(--c-elec); }
+.brd-other{ border-left: 3px solid var(--c-other);}
 
-  /* ── CLASS SCHEDULE SECTION ── */
-  .schedule-legend {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-  }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
-  .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+/* Assignment list */
+.filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.chip {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+.chip:hover { color: var(--text); border-color: var(--muted); }
+.chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-  /* color per subject */
-  .color-eng   { background: #6c8fff; }
-  .color-math  { background: #a78bfa; }
-  .color-sci   { background: #34d399; }
-  .color-ss    { background: #fbbf24; }
-  .color-elec  { background: #f472b6; }
-  .color-other { background: #94a3b8; }
+.asgn-list { display: flex; flex-direction: column; gap: 7px; }
+.asgn-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  transition: border-color .15s;
+}
+.asgn-card:hover { border-color: var(--muted); }
+.asgn-card.asgn-done { opacity: .5; }
+.asgn-card.asgn-done .asgn-name { text-decoration: line-through; }
+.asgn-info { flex: 1; min-width: 0; }
+.asgn-name { font-size: 13.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.asgn-meta { font-size: 11.5px; color: var(--muted); margin-top: 3px; display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+.subj-tag { padding: 2px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 700; }
+.due-badge { font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 4px; }
+.due-over  { background: rgba(248,113,113,.15); color: var(--red); }
+.due-soon  { background: rgba(251,191,36,.15); color: var(--yellow); }
+.due-ok    { background: rgba(52,211,153,.15); color: var(--green); }
+.asgn-acts { display: flex; gap: 5px; opacity: 0; transition: opacity .15s; }
+.asgn-card:hover .asgn-acts { opacity: 1; }
 
-  .text-eng   { color: #6c8fff; }
-  .text-math  { color: #a78bfa; }
-  .text-sci   { color: #34d399; }
-  .text-ss    { color: #fbbf24; }
-  .text-elec  { color: #f472b6; }
-  .text-other { color: #94a3b8; }
+/* Exams grid */
+.exams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; }
+.exam-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  transition: border-color .15s, transform .15s;
+  position: relative;
+}
+.exam-card:hover { border-color: var(--muted); transform: translateY(-1px); }
+.exam-card-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: var(--radius) var(--radius) 0 0; }
+.exam-subj { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+.exam-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.exam-cd {
+  font-family: 'Space Mono', monospace;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+  margin: 8px 0 4px;
+}
+.exam-cd.urg  { color: var(--red); }
+.exam-cd.warn { color: var(--yellow); }
+.exam-cd.ok   { color: var(--green); }
+.exam-date    { font-size: 12px; color: var(--muted); }
+.exam-notes   { font-size: 12px; color: var(--muted); margin-top: 7px; }
+.exam-acts    { display: flex; gap: 6px; margin-top: 12px; opacity: 0; transition: opacity .15s; }
+.exam-card:hover .exam-acts { opacity: 1; }
 
-  .bg-eng   { background: rgba(108,143,255,0.15); }
-  .bg-math  { background: rgba(167,139,250,0.15); }
-  .bg-sci   { background: rgba(52,211,153,0.15); }
-  .bg-ss    { background: rgba(251,191,36,0.15); }
-  .bg-elec  { background: rgba(244,114,182,0.15); }
-  .bg-other { background: rgba(148,163,184,0.15); }
+/* ═══════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════ */
+.overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-title { font-size: 17px; font-weight: 700; margin-bottom: 18px; }
+.fg { margin-bottom: 13px; }
+.fg label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 5px; }
+.fi {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 9px 11px;
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s;
+}
+.fi:focus { border-color: var(--accent); }
+.fi option { background: var(--surface2); }
+.form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
 
-  .border-eng   { border-left: 3px solid #6c8fff; }
-  .border-math  { border-left: 3px solid #a78bfa; }
-  .border-sci   { border-left: 3px solid #34d399; }
-  .border-ss    { border-left: 3px solid #fbbf24; }
-  .border-elec  { border-left: 3px solid #f472b6; }
-  .border-other { border-left: 3px solid #94a3b8; }
+/* ═══════════════════════════════════════════════
+   IMPORT MODAL (grades)
+═══════════════════════════════════════════════ */
+.file-drop {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s;
+  margin-bottom: 14px;
+}
+.file-drop:hover { border-color: var(--accent); }
+.file-drop-icon { font-size: 32px; margin-bottom: 8px; }
+.file-drop-text { font-size: 13px; color: var(--muted); }
 
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 13px;
-    font-weight: 500;
-    z-index: 999;
-    transform: translateY(80px);
-    opacity: 0;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
+/* ═══════════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════════ */
+.empty { text-align: center; padding: 50px 20px; color: var(--muted); }
+.empty-icon  { font-size: 36px; margin-bottom: 10px; }
+.empty-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+.empty-sub   { font-size: 13px; }
 
-  @media (max-width: 768px) {
-    .layout { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .stats-bar { grid-template-columns: repeat(2, 1fr); }
-  }
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 15px;
+  font-size: 13px; font-weight: 500;
+  z-index: 999;
+  transform: translateY(70px); opacity: 0;
+  transition: all .3s;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ═══════════════════════════════════════════════
+   DASHBOARD HOME (overview)
+═══════════════════════════════════════════════ */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.overview-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.ov-card-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+.mini-course { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.mini-course:last-child { border-bottom: none; }
+.mini-course-name { flex: 1; font-size: 13px; font-weight: 500; }
+.mini-course-grade { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; }
+.mini-asgn { padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+.mini-asgn:last-child { border-bottom: none; }
+.mini-exam { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.mini-exam:last-child { border-bottom: none; }
+.mini-cd { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .stats-row-4 { grid-template-columns: repeat(2,1fr); }
+  .overview-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
 
-<!-- TOP NAV -->
+<!-- ─── TOP NAV ─────────────────────────────────── -->
 <nav class="topnav">
-  <div class="topnav-logo">EHS //</div>
-  <div class="topnav-tabs">
-    <a href="index.html" class="topnav-tab" style="text-decoration:none">📊 Dashboard</a>
-    <button class="topnav-tab active-main" onclick="showPage('schedule')">📅 Planner</button>
-  </div>
-  <div class="topnav-right">
-    <button class="btn btn-ghost btn-sm" onclick="openImportModal()">⬆ Import from LearnStage</button>
-    <button class="btn btn-primary btn-sm" onclick="openAddModal('assignment')">+ Add Task</button>
+  <div class="nav-logo">EHS //</div>
+  <button class="nav-tab active" id="nt-home"     onclick="switchMain('home')">🏠 Home</button>
+  <button class="nav-tab"        id="nt-grades"   onclick="switchMain('grades')">📊 Grades</button>
+  <div class="nav-sep"></div>
+  <button class="nav-tab"        id="nt-planner"  onclick="switchMain('planner')">📅 Logan's Planner</button>
+  <div class="nav-right">
+    <span class="cloud-badge warn" id="cloud-status">● Local Only</span>
   </div>
 </nav>
 
-<div class="layout">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div>
-      <div class="sidebar-section-label">Logan's Planner</div>
-      <div style="display:flex;flex-direction:column;gap:2px;">
-        <button class="sidebar-nav-item active" id="nav-schedule" onclick="showPage('schedule')">
-          <span class="nav-icon">📅</span> Weekly Schedule
-        </button>
-        <button class="sidebar-nav-item" id="nav-assignments" onclick="showPage('assignments')">
-          <span class="nav-icon">📝</span> Assignments
-          <span class="nav-badge warn" id="badge-due">0</span>
-        </button>
-        <button class="sidebar-nav-item" id="nav-exams" onclick="showPage('exams')">
-          <span class="nav-icon">🎯</span> Exams & Tests
-          <span class="nav-badge danger" id="badge-exams">0</span>
-        </button>
+<!-- ─── HOME PAGE ───────────────────────────────── -->
+<div class="page active" id="page-home">
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="sb-label">Overview</div>
+        <button class="sb-item active" onclick="switchMain('home')"><span class="ic">🏠</span> Home</button>
+        <button class="sb-item"        onclick="switchMain('grades')"><span class="ic">📊</span> Grades</button>
+        <button class="sb-item"        onclick="switchMain('planner')"><span class="ic">📅</span> Planner</button>
       </div>
-    </div>
-
-    <div>
-      <div class="sidebar-section-label">Subjects</div>
-      <div class="subject-list">
-        <div class="subject-pill"><div class="subject-dot color-eng"></div> English</div>
-        <div class="subject-pill"><div class="subject-dot color-math"></div> Math</div>
-        <div class="subject-pill"><div class="subject-dot color-sci"></div> Science</div>
-        <div class="subject-pill"><div class="subject-dot color-ss"></div> Social Studies</div>
-        <div class="subject-pill"><div class="subject-dot color-elec"></div> Electives</div>
+      <div>
+        <div class="sb-label">Students</div>
+        <div id="sb-students-home"></div>
       </div>
-    </div>
-
-    <div style="margin-top:auto;">
-      <button class="sidebar-nav-item" onclick="openAddModal('class')">
-        <span class="nav-icon">➕</span> Add Class
-      </button>
-      <button class="sidebar-nav-item" onclick="openAddModal('exam')">
-        <span class="nav-icon">➕</span> Add Exam
-      </button>
-      <button class="sidebar-nav-item" onclick="clearAll()" style="color:var(--red);">
-        <span class="nav-icon">🗑</span> Clear All Data
-      </button>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- SCHEDULE PAGE -->
-    <div class="page active" id="page-schedule">
-      <div class="section-header">
+    </aside>
+    <div class="main-content">
+      <div class="sec-header">
         <div>
-          <div class="section-title">Weekly Schedule</div>
-          <div class="section-sub">Logan's class timetable</div>
+          <div class="sec-title">Family Overview</div>
+          <div class="sec-sub">Excel High School — all students at a glance</div>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="openAddModal('class')">+ Add Class</button>
       </div>
 
-      <div class="week-nav">
-        <button class="week-nav-btn" onclick="changeWeek(-1)">‹</button>
-        <span class="week-label" id="week-label"></span>
-        <button class="week-nav-btn" onclick="changeWeek(1)">›</button>
-        <button class="today-btn" onclick="goToday()">Today</button>
+      <!-- big stats -->
+      <div class="stats-row stats-row-4" id="home-stats">
+        <div class="stat-card"><div class="stat-num" id="hs-courses">—</div><div class="stat-label">Courses</div></div>
+        <div class="stat-card"><div class="stat-num" id="hs-done">—</div><div class="stat-label">Assignments Done</div></div>
+        <div class="stat-card"><div class="stat-num" id="hs-avg" style="color:var(--accent)">—</div><div class="stat-label">Avg Grade</div></div>
+        <div class="stat-card"><div class="stat-num" id="hs-tasks" style="color:var(--yellow)">—</div><div class="stat-label">Tasks Due Soon</div></div>
       </div>
 
-      <div class="schedule-legend">
-        <div class="legend-item"><div class="legend-dot color-eng"></div> English</div>
-        <div class="legend-item"><div class="legend-dot color-math"></div> Math</div>
-        <div class="legend-item"><div class="legend-dot color-sci"></div> Science</div>
-        <div class="legend-item"><div class="legend-dot color-ss"></div> Social Studies</div>
-        <div class="legend-item"><div class="legend-dot color-elec"></div> Electives</div>
-      </div>
-
-      <div class="week-grid" id="week-grid">
-        <!-- built by JS -->
-      </div>
-    </div>
-
-    <!-- ASSIGNMENTS PAGE -->
-    <div class="page" id="page-assignments">
-      <div class="stats-bar" id="stats-bar">
-        <div class="stat-card"><div class="stat-num" id="s-total">0</div><div class="stat-label">Total Tasks</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:var(--red)" id="s-overdue">0</div><div class="stat-label">Overdue</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:var(--yellow)" id="s-due-soon">0</div><div class="stat-label">Due This Week</div></div>
-        <div class="stat-card"><div class="stat-num" style="color:var(--green)" id="s-done">0</div><div class="stat-label">Completed</div></div>
-      </div>
-
-      <div class="import-banner">
-        <div class="import-banner-icon">🔄</div>
-        <div class="import-banner-text">
-          <div class="import-banner-title">Import from LearnStage</div>
-          <div class="import-banner-sub">Pull assignments directly from your courses. Existing checkmarks are preserved.</div>
+      <div class="overview-grid">
+        <!-- Grades snapshot -->
+        <div class="overview-card">
+          <div class="ov-card-title">📊 Grades <span id="ov-student-name" style="color:var(--text);text-transform:none;font-size:13px;font-weight:600;"></span></div>
+          <div id="ov-courses-mini"></div>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="openImportModal()">Import Now</button>
-      </div>
 
-      <div class="section-header">
-        <div>
-          <div class="section-title">Assignments</div>
+        <!-- Upcoming tasks -->
+        <div class="overview-card">
+          <div class="ov-card-title">📝 Upcoming Assignments</div>
+          <div id="ov-tasks-mini"></div>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="openAddModal('assignment')">+ Add Task</button>
-      </div>
 
-      <div class="filters">
-        <button class="filter-chip active" onclick="setFilter('all', this)">All</button>
-        <button class="filter-chip" onclick="setFilter('pending', this)">Pending</button>
-        <button class="filter-chip" onclick="setFilter('overdue', this)">Overdue</button>
-        <button class="filter-chip" onclick="setFilter('completed', this)">Completed</button>
-        <button class="filter-chip" onclick="setFilter('English', this)">English</button>
-        <button class="filter-chip" onclick="setFilter('Math', this)">Math</button>
-        <button class="filter-chip" onclick="setFilter('Science', this)">Science</button>
-        <button class="filter-chip" onclick="setFilter('Social Studies', this)">Social Studies</button>
-        <button class="filter-chip" onclick="setFilter('Electives', this)">Electives</button>
-      </div>
-
-      <div class="assignment-list" id="assignment-list"></div>
-    </div>
-
-    <!-- EXAMS PAGE -->
-    <div class="page" id="page-exams">
-      <div class="section-header">
-        <div>
-          <div class="section-title">Exams & Tests</div>
-          <div class="section-sub">Upcoming assessments and countdowns</div>
+        <!-- Exams -->
+        <div class="overview-card">
+          <div class="ov-card-title">🎯 Exam Countdowns</div>
+          <div id="ov-exams-mini"></div>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="openAddModal('exam')">+ Add Exam</button>
+
+        <!-- Planner summary -->
+        <div class="overview-card">
+          <div class="ov-card-title">📅 Logan's Week</div>
+          <div id="ov-planner-mini"></div>
+        </div>
       </div>
-      <div class="exams-grid" id="exams-grid"></div>
-    </div>
 
-  </main>
-</div>
-
-<!-- ADD MODAL -->
-<div class="modal-overlay" id="add-modal">
-  <div class="modal">
-    <div class="modal-title" id="modal-title">Add Task</div>
-    <div id="modal-body"></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveModal()">Save</button>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" onclick="switchMain('grades')">View Full Grades →</button>
+        <button class="btn btn-ghost" onclick="switchMain('planner')">Open Planner →</button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- IMPORT MODAL -->
-<div class="modal-overlay" id="import-modal">
+<!-- ─── GRADES PAGE ──────────────────────────────── -->
+<div class="page" id="page-grades">
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="sb-label">Navigation</div>
+        <button class="sb-item" onclick="switchMain('home')"><span class="ic">🏠</span> Home</button>
+        <button class="sb-item active"><span class="ic">📊</span> Grades</button>
+        <button class="sb-item" onclick="switchMain('planner')"><span class="ic">📅</span> Planner</button>
+      </div>
+      <div>
+        <div class="sb-label">Students</div>
+        <div id="sb-students-grades"></div>
+      </div>
+      <div style="margin-top:auto;">
+        <button class="sb-item" onclick="openGradesImport()"><span class="ic">⬆</span> Import Data</button>
+        <button class="sb-item" onclick="loadDemoData()" style="color:var(--accent)"><span class="ic">🎭</span> Load Demo</button>
+      </div>
+    </aside>
+    <div class="main-content">
+      <div class="sec-header">
+        <div>
+          <div class="sec-title" id="grades-title">Grade Tracker</div>
+          <div class="sec-sub" id="grades-sub">Import LearnStage data to see grades</div>
+        </div>
+        <div class="sec-actions">
+          <button class="btn btn-ghost btn-sm" onclick="openGradesImport()">⬆ Import</button>
+        </div>
+      </div>
+
+      <div class="import-strip" id="import-strip" style="display:none;">
+        <div class="is-icon">🔄</div>
+        <div class="is-text">
+          <div class="is-title">LearnStage Import</div>
+          <div class="is-sub">Paste scraped JSON to update grade data. Existing checkmarks preserved.</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openGradesImport()">Import Now</button>
+      </div>
+
+      <!-- student switcher -->
+      <div class="student-tabs" id="student-tabs"></div>
+
+      <!-- grade stats -->
+      <div class="stats-row stats-row-4" id="grade-stats" style="display:none;">
+        <div class="stat-card"><div class="stat-num" id="gs-courses">0</div><div class="stat-label">Courses</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--accent)" id="gs-grade">—</div><div class="stat-label">Avg Grade</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--green)" id="gs-done">0</div><div class="stat-label">Assignments Done</div></div>
+        <div class="stat-card"><div class="stat-num" style="color:var(--yellow)" id="gs-remain">0</div><div class="stat-label">Remaining</div></div>
+      </div>
+
+      <!-- courses / detail -->
+      <div id="grade-body">
+        <div class="empty">
+          <div class="empty-icon">🎓</div>
+          <div class="empty-title">No data yet</div>
+          <div class="empty-sub">Import from LearnStage or load demo data to get started.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PLANNER PAGE ────────────────────────────── -->
+<div class="page" id="page-planner">
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="sb-label">Navigation</div>
+        <button class="sb-item" onclick="switchMain('home')"><span class="ic">🏠</span> Home</button>
+        <button class="sb-item" onclick="switchMain('grades')"><span class="ic">📊</span> Grades</button>
+        <button class="sb-item active"><span class="ic">📅</span> Planner</button>
+      </div>
+      <div>
+        <div class="sb-label">Logan's Planner</div>
+        <button class="sb-item active" id="pn-schedule"    onclick="showPlannerTab('schedule')"><span class="ic">📅</span> Schedule</button>
+        <button class="sb-item"        id="pn-assignments" onclick="showPlannerTab('assignments')"><span class="ic">📝</span> Assignments <span class="sb-badge warn" id="pb-due">0</span></button>
+        <button class="sb-item"        id="pn-exams"       onclick="showPlannerTab('exams')"><span class="ic">🎯</span> Exams <span class="sb-badge danger" id="pb-exams">0</span></button>
+      </div>
+      <div>
+        <div class="sb-label">Subjects</div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          <div class="sb-item" style="cursor:default;"><div class="subject-dot sc-eng"></div> English</div>
+          <div class="sb-item" style="cursor:default;"><div class="subject-dot sc-math"></div> Math</div>
+          <div class="sb-item" style="cursor:default;"><div class="subject-dot sc-sci"></div> Science</div>
+          <div class="sb-item" style="cursor:default;"><div class="subject-dot sc-ss"></div> Social Studies</div>
+          <div class="sb-item" style="cursor:default;"><div class="subject-dot sc-elec"></div> Electives</div>
+        </div>
+      </div>
+      <div style="margin-top:auto;">
+        <button class="sb-item" onclick="openPlannerModal('class')"><span class="ic">➕</span> Add Class</button>
+        <button class="sb-item" onclick="openPlannerModal('assignment')"><span class="ic">➕</span> Add Task</button>
+        <button class="sb-item" onclick="openPlannerModal('exam')"><span class="ic">➕</span> Add Exam</button>
+        <button class="sb-item" onclick="openImportModal()"><span class="ic">⬆</span> Import LearnStage</button>
+      </div>
+    </aside>
+    <div class="main-content">
+
+      <!-- SCHEDULE TAB -->
+      <div id="ptab-schedule">
+        <div class="sec-header">
+          <div><div class="sec-title">Weekly Schedule</div><div class="sec-sub">Logan's class timetable</div></div>
+          <div class="sec-actions"><button class="btn btn-primary btn-sm" onclick="openPlannerModal('class')">+ Add Class</button></div>
+        </div>
+        <div class="week-nav">
+          <button class="wn-btn" onclick="changeWeek(-1)">‹</button>
+          <span class="wn-label" id="week-label">—</span>
+          <button class="wn-btn" onclick="changeWeek(1)">›</button>
+          <button class="today-btn" onclick="goToday()">Today</button>
+        </div>
+        <div class="sched-legend">
+          <div class="leg-item"><div class="leg-dot sc-eng"></div> English</div>
+          <div class="leg-item"><div class="leg-dot sc-math"></div> Math</div>
+          <div class="leg-item"><div class="leg-dot sc-sci"></div> Science</div>
+          <div class="leg-item"><div class="leg-dot sc-ss"></div> Social Studies</div>
+          <div class="leg-item"><div class="leg-dot sc-elec"></div> Electives</div>
+        </div>
+        <div class="week-grid" id="week-grid"></div>
+      </div>
+
+      <!-- ASSIGNMENTS TAB -->
+      <div id="ptab-assignments" style="display:none;">
+        <div class="stats-row stats-row-4" style="margin-bottom:18px;">
+          <div class="stat-card"><div class="stat-num" id="ps-total">0</div><div class="stat-label">Total Tasks</div></div>
+          <div class="stat-card"><div class="stat-num" style="color:var(--red)"    id="ps-over">0</div><div class="stat-label">Overdue</div></div>
+          <div class="stat-card"><div class="stat-num" style="color:var(--yellow)" id="ps-soon">0</div><div class="stat-label">Due This Week</div></div>
+          <div class="stat-card"><div class="stat-num" style="color:var(--green)"  id="ps-done">0</div><div class="stat-label">Completed</div></div>
+        </div>
+        <div class="sec-header">
+          <div class="sec-title">Assignments</div>
+          <div class="sec-actions"><button class="btn btn-primary btn-sm" onclick="openPlannerModal('assignment')">+ Add Task</button></div>
+        </div>
+        <div class="filter-row">
+          <button class="chip active" onclick="setAFilter('all',this)">All</button>
+          <button class="chip" onclick="setAFilter('pending',this)">Pending</button>
+          <button class="chip" onclick="setAFilter('overdue',this)">Overdue</button>
+          <button class="chip" onclick="setAFilter('completed',this)">Completed</button>
+          <button class="chip" onclick="setAFilter('English',this)">English</button>
+          <button class="chip" onclick="setAFilter('Math',this)">Math</button>
+          <button class="chip" onclick="setAFilter('Science',this)">Science</button>
+          <button class="chip" onclick="setAFilter('Social Studies',this)">Social Studies</button>
+          <button class="chip" onclick="setAFilter('Electives',this)">Electives</button>
+        </div>
+        <div class="asgn-list" id="asgn-list"></div>
+      </div>
+
+      <!-- EXAMS TAB -->
+      <div id="ptab-exams" style="display:none;">
+        <div class="sec-header">
+          <div><div class="sec-title">Exams & Tests</div><div class="sec-sub">Upcoming assessments and countdowns</div></div>
+          <div class="sec-actions"><button class="btn btn-primary btn-sm" onclick="openPlannerModal('exam')">+ Add Exam</button></div>
+        </div>
+        <div class="exams-grid" id="exams-grid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODALS ───────────────────────────────────── -->
+
+<!-- Planner add/edit modal -->
+<div class="overlay" id="planner-modal" onclick="if(event.target===this)closePlannerModal()">
   <div class="modal">
-    <div class="modal-title">Import from LearnStage</div>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">
-      Paste the JSON output from the LearnStage scraper below. Your existing checkmarks will be preserved.
-    </p>
-    <div class="form-group">
-      <label class="form-label">Scraped JSON Data</label>
-      <textarea class="form-input" id="import-json" rows="10" placeholder='[{"name":"Assignment Name","subject":"Math","dueDate":"2026-03-20","type":"Homework"}]' style="resize:vertical;font-family:monospace;font-size:12px;"></textarea>
+    <div class="modal-title" id="pm-title">Add</div>
+    <div id="pm-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closePlannerModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="savePlannerModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- LearnStage import modal -->
+<div class="overlay" id="import-modal" onclick="if(event.target===this)closeImportModal()">
+  <div class="modal">
+    <div class="modal-title">Import Assignments from LearnStage</div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">Paste the JSON from the scraper. Existing checkmarks are preserved.</p>
+    <div class="fg">
+      <label>Scraped JSON</label>
+      <textarea class="fi" id="import-json" rows="9" placeholder='[{"name":"Assignment","subject":"Math","dueDate":"2026-03-20","type":"Homework"}]' style="resize:vertical;font-family:monospace;font-size:12px;"></textarea>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeImportModal()">Cancel</button>
@@ -728,47 +937,159 @@
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- Grades JSON import modal -->
+<div class="overlay" id="grades-import-modal" onclick="if(event.target===this)closeGradesImport()">
+  <div class="modal">
+    <div class="modal-title">Import Grade Data</div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">Paste the full JSON output from the LearnStage scraper.</p>
+    <div class="fg">
+      <label>Scraper JSON Output</label>
+      <textarea class="fi" id="grades-json" rows="12" placeholder='{"studentName":"Logan","courses":[...]}' style="resize:vertical;font-family:monospace;font-size:12px;"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeGradesImport()">Cancel</button>
+      <button class="btn btn-primary" onclick="doGradesImport()">Import</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ── DATA ──────────────────────────────────────────────
-const STORAGE_KEY = 'logan_planner_v1';
-let state = {
-  assignments: [],
-  exams: [],
-  classes: []   // {id, name, subject, day(0-4), startHour, startMin, endHour, endMin}
-};
+/* ═══════════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════════ */
+const SUBJECTS = ['English','Math','Science','Social Studies','Electives'];
+const SC = {English:'eng',Math:'math',Science:'sci','Social Studies':'ss',Electives:'elec'};
+const SCOLORS = {eng:'#6c8fff',math:'#a78bfa',sci:'#34d399',ss:'#fbbf24',elec:'#f472b6',other:'#94a3b8'};
+const DAYS = ['Mon','Tue','Wed','Thu','Fri'];
+const HOURS = [8,9,10,11,12,13,14,15,16];
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  // Firebase sync (if available)
-  if (window.firebase && window.db) {
-    try {
-      window.db.ref('logan_planner').set(state);
-    } catch(e) {}
-  }
-  updateBadges();
+function sc(s) { return SC[s] || 'other'; }
+function scolor(s) { return SCOLORS[sc(s)]; }
+
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+const GKEY = 'ehs_grades_v2';
+const PKEY = 'ehs_planner_v2';
+const FBURL = 'https://school-tracker-7e84c-default-rtdb.firebaseio.com';
+
+let gradesData = {};  // { studentId: { studentName, courses:[] } }
+let activeStudent = null;
+let detailCourse = null;
+
+let planner = { assignments:[], exams:[], classes:[] };
+let plannerFilter = 'all';
+let weekOffset = 0;
+let pmType = 'assignment';
+let pmEditId = null;
+let ptab = 'schedule';
+
+/* ═══════════════════════════════════════════════
+   PERSISTENCE
+═══════════════════════════════════════════════ */
+function saveGrades() {
+  localStorage.setItem(GKEY, JSON.stringify(gradesData));
+  fbSet('grades', gradesData);
+}
+function savePlanner() {
+  localStorage.setItem(PKEY, JSON.stringify(planner));
+  fbSet('planner', planner);
+  updatePlannerBadges();
 }
 
-function load() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (raw) {
-    try { state = JSON.parse(raw); }
-    catch(e) {}
-  }
-  // seed sample data on first load
-  if (!state.assignments.length && !state.classes.length && !state.exams.length) {
-    seedSampleData();
-  }
+function loadAll() {
+  const g = localStorage.getItem(GKEY);
+  const p = localStorage.getItem(PKEY);
+  if (g) try { gradesData = JSON.parse(g); } catch(e) {}
+  if (p) try { planner = JSON.parse(p); } catch(e) {}
+  if (!planner.assignments) planner.assignments = [];
+  if (!planner.exams) planner.exams = [];
+  if (!planner.classes) planner.classes = [];
+  if (!Object.keys(gradesData).length && !planner.assignments.length) seedAll();
 }
 
-function seedSampleData() {
+function fbSet(path, data) {
+  try {
+    fetch(`${FBURL}/${path}.json`, {
+      method:'PUT', body: JSON.stringify(data),
+      headers:{'Content-Type':'application/json'}
+    }).then(r => r.ok && updateCloudBadge(true)).catch(()=>{});
+  } catch(e) {}
+}
+function fbGet(path, cb) {
+  fetch(`${FBURL}/${path}.json`)
+    .then(r=>r.json()).then(d=>{ if(d) cb(d); updateCloudBadge(true); })
+    .catch(()=>updateCloudBadge(false));
+}
+function updateCloudBadge(ok) {
+  const el = document.getElementById('cloud-status');
+  el.textContent = ok ? '● Cloud Synced' : '● Local Only';
+  el.className = 'cloud-badge ' + (ok ? 'ok' : 'warn');
+}
+
+/* ═══════════════════════════════════════════════
+   SEED DATA
+═══════════════════════════════════════════════ */
+function seedAll() {
   const today = new Date();
-  const fmt = (d) => d.toISOString().split('T')[0];
-  const addDays = (n) => { const d = new Date(today); d.setDate(d.getDate()+n); return fmt(d); };
+  const ad = n => { const d=new Date(today); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0]; };
 
-  state.classes = [
+  // grades seed
+  gradesData['logan'] = {
+    studentName:'Logan',
+    courses:[
+      {name:'English Literature',code:'ENG-09',subject:'English',currentGrade:87,status:'In Progress',moduleProgress:'4/8',
+       sections:[
+         {name:'Quizzes',assignments:[
+           {name:'Vocab Quiz Ch.10',receivedPoints:18,outOf:20,percentage:'90%',completed:true},
+           {name:'Vocab Quiz Ch.11',receivedPoints:17,outOf:20,percentage:'85%',completed:true},
+           {name:'Vocab Quiz Ch.12',receivedPoints:null,outOf:20,percentage:null,completed:false},
+         ]},
+         {name:'Essays',assignments:[
+           {name:'Descriptive Essay',receivedPoints:43,outOf:50,percentage:'86%',completed:true},
+           {name:'Gatsby Analysis',receivedPoints:null,outOf:50,percentage:null,completed:false},
+         ]},
+         {name:'Exams',assignments:[
+           {name:'Midterm',receivedPoints:85,outOf:100,percentage:'85%',completed:true},
+           {name:'Final',receivedPoints:null,outOf:100,percentage:null,completed:false},
+         ]},
+       ]},
+      {name:'Algebra II',code:'MATH-11',subject:'Math',currentGrade:92,status:'In Progress',moduleProgress:'5/10',
+       sections:[
+         {name:'Homework',assignments:[
+           {name:'Polynomial Functions',receivedPoints:null,outOf:20,percentage:null,completed:false},
+           {name:'Rational Expressions',receivedPoints:19,outOf:20,percentage:'95%',completed:true},
+         ]},
+         {name:'Tests',assignments:[
+           {name:'Unit 2 Test',receivedPoints:90,outOf:100,percentage:'90%',completed:true},
+           {name:'Unit 3 Test',receivedPoints:null,outOf:100,percentage:null,completed:false},
+         ]},
+       ]},
+      {name:'Biology',code:'SCI-10',subject:'Science',currentGrade:78,status:'In Progress',moduleProgress:'3/8',
+       sections:[
+         {name:'Labs',assignments:[
+           {name:'Cell Division Lab',receivedPoints:null,outOf:30,percentage:null,completed:false},
+           {name:'Photosynthesis Lab',receivedPoints:25,outOf:30,percentage:'83%',completed:true},
+         ]},
+         {name:'Quizzes',assignments:[
+           {name:'Cell Structure',receivedPoints:14,outOf:20,percentage:'70%',completed:true},
+           {name:'Genetics',receivedPoints:null,outOf:20,percentage:null,completed:false},
+         ]},
+       ]},
+      {name:'World History',code:'SS-10',subject:'Social Studies',currentGrade:85,status:'In Progress',moduleProgress:'4/9',
+       sections:[
+         {name:'Essays',assignments:[
+           {name:'WWI Primary Sources',receivedPoints:null,outOf:50,percentage:null,completed:false},
+           {name:'WWII Causes Essay',receivedPoints:44,outOf:50,percentage:'88%',completed:true},
+         ]},
+       ]},
+    ]
+  };
+
+  // planner seed
+  planner.classes = [
     {id:'c1',name:'English Literature',subject:'English',day:0,startHour:8,startMin:0,endHour:9,endMin:0},
     {id:'c2',name:'Algebra II',subject:'Math',day:0,startHour:9,startMin:30,endHour:10,endMin:30},
     {id:'c3',name:'Biology',subject:'Science',day:1,startHour:8,startMin:0,endHour:9,endMin:30},
@@ -780,509 +1101,581 @@ function seedSampleData() {
     {id:'c9',name:'World History',subject:'Social Studies',day:4,startHour:10,startMin:0,endHour:11,endMin:0},
     {id:'c10',name:'English Literature',subject:'English',day:4,startHour:8,startMin:0,endHour:9,endMin:0},
   ];
-
-  state.assignments = [
-    {id:'a1',name:'Ch.4 Reading Response — The Great Gatsby',subject:'English',dueDate:addDays(-1),type:'Homework',completed:false},
-    {id:'a2',name:'Polynomial Functions Problem Set',subject:'Math',dueDate:addDays(2),type:'Homework',completed:false},
-    {id:'a3',name:'Cell Division Lab Report',subject:'Science',dueDate:addDays(4),type:'Lab Report',completed:false},
-    {id:'a4',name:'WWI Primary Sources Essay',subject:'Social Studies',dueDate:addDays(7),type:'Essay',completed:false},
-    {id:'a5',name:'Vocab Quiz Ch.12',subject:'English',dueDate:addDays(1),type:'Quiz Prep',completed:true},
+  planner.assignments = [
+    {id:'a1',name:'Ch.4 Reading Response — The Great Gatsby',subject:'English',dueDate:ad(-1),type:'Homework',completed:false},
+    {id:'a2',name:'Polynomial Functions Problem Set',subject:'Math',dueDate:ad(2),type:'Homework',completed:false},
+    {id:'a3',name:'Cell Division Lab Report',subject:'Science',dueDate:ad(4),type:'Lab Report',completed:false},
+    {id:'a4',name:'WWI Primary Sources Essay',subject:'Social Studies',dueDate:ad(7),type:'Essay',completed:false},
+    {id:'a5',name:'Vocab Quiz Ch.12',subject:'English',dueDate:ad(1),type:'Quiz Prep',completed:true},
+  ];
+  planner.exams = [
+    {id:'e1',name:'Algebra II Unit 3 Test',subject:'Math',date:ad(5),notes:'Ch.7-9, Polynomials'},
+    {id:'e2',name:'Biology Midterm',subject:'Science',date:ad(14),notes:'Cell biology, genetics'},
+    {id:'e3',name:'English Literature Essay Exam',subject:'English',date:ad(21),notes:'Gatsby themes'},
   ];
 
-  state.exams = [
-    {id:'e1',name:'Algebra II Unit 3 Test',subject:'Math',date:addDays(5),notes:'Ch.7-9, Polynomials'},
-    {id:'e2',name:'Biology Midterm',subject:'Science',date:addDays(14),notes:'Cell biology, genetics'},
-    {id:'e3',name:'English Literature Essay Exam',subject:'English',date:addDays(21),notes:'Gatsby themes & analysis'},
-  ];
-
-  save();
+  activeStudent = 'logan';
+  saveGrades();
+  savePlanner();
 }
 
-// ── SUBJECTS ──────────────────────────────────────────
-const SUBJECTS = ['English','Math','Science','Social Studies','Electives'];
-const SUBJECT_COLOR = {
-  'English':'eng', 'Math':'math', 'Science':'sci',
-  'Social Studies':'ss', 'Electives':'elec'
-};
-
-function subjectColor(s) { return SUBJECT_COLOR[s] || 'other'; }
-
-// ── PAGE ROUTING ──────────────────────────────────────
-let currentPage = 'schedule';
-function showPage(p) {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
-  const navEl = document.getElementById('nav-'+p);
-  if (navEl) navEl.classList.add('active');
-  currentPage = p;
-  if (p==='schedule') renderSchedule();
-  if (p==='assignments') renderAssignments();
-  if (p==='exams') renderExams();
+/* ═══════════════════════════════════════════════
+   MAIN PAGE SWITCHING
+═══════════════════════════════════════════════ */
+let currentMain = 'home';
+function switchMain(p) {
+  ['home','grades','planner'].forEach(x => {
+    document.getElementById('page-'+x).classList.toggle('active', x===p);
+    const nt = document.getElementById('nt-'+x);
+    if (nt) nt.classList.toggle('active', x===p);
+  });
+  currentMain = p;
+  if (p==='home')    renderHome();
+  if (p==='grades')  renderGrades();
+  if (p==='planner') { renderSchedule(); renderPlannerTab(); }
 }
 
-// ── WEEK CALENDAR ─────────────────────────────────────
-let weekOffset = 0;
-const HOURS = [8,9,10,11,12,13,14,15,16];
-const DAYS = ['Mon','Tue','Wed','Thu','Fri'];
+/* ═══════════════════════════════════════════════
+   HOME
+═══════════════════════════════════════════════ */
+function renderHome() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const weekEnd = new Date(today); weekEnd.setDate(today.getDate()+7);
 
-function getWeekStart(offset=0) {
-  const now = new Date();
-  const day = now.getDay(); // 0=Sun
-  const monday = new Date(now);
-  monday.setDate(now.getDate() - (day===0 ? 6 : day-1) + offset*7);
-  monday.setHours(0,0,0,0);
-  return monday;
+  // aggregate grades
+  let totalCourses=0, totalDone=0, gradeSum=0, gradeCount=0;
+  Object.values(gradesData).forEach(sd => {
+    (sd.courses||[]).forEach(c => {
+      totalCourses++;
+      (c.sections||[]).forEach(sec => sec.assignments.forEach(a => { if(a.completed) totalDone++; }));
+      if (c.currentGrade) { gradeSum += parseFloat(c.currentGrade); gradeCount++; }
+    });
+  });
+  const avgGrade = gradeCount ? (gradeSum/gradeCount).toFixed(1) : '—';
+  const tasksDue = planner.assignments.filter(a=>!a.completed&&new Date(a.dueDate)>=today&&new Date(a.dueDate)<=weekEnd).length;
+
+  document.getElementById('hs-courses').textContent = totalCourses || '—';
+  document.getElementById('hs-done').textContent = totalDone || '—';
+  document.getElementById('hs-avg').textContent = avgGrade;
+  document.getElementById('hs-tasks').textContent = tasksDue;
+
+  // sidebar students
+  const sbH = document.getElementById('sb-students-home');
+  sbH.innerHTML = Object.values(gradesData).map(sd =>
+    `<button class="sb-item" onclick="switchMain('grades')">${sd.studentName}</button>`
+  ).join('');
+
+  // mini courses
+  const sd = gradesData[activeStudent||Object.keys(gradesData)[0]];
+  if (sd) {
+    document.getElementById('ov-student-name').textContent = sd.studentName;
+    document.getElementById('ov-courses-mini').innerHTML = (sd.courses||[]).slice(0,5).map(c => {
+      const col = scolor(c.subject);
+      const g = c.currentGrade || '—';
+      return `<div class="mini-course">
+        <div style="width:4px;height:32px;border-radius:2px;background:${col};flex-shrink:0;"></div>
+        <div class="mini-course-name">${c.name}</div>
+        <div class="mini-course-grade" style="color:${col}">${g}</div>
+      </div>`;
+    }).join('') || '<div style="color:var(--muted);font-size:13px;">No grade data</div>';
+  }
+
+  // mini assignments
+  const pending = planner.assignments.filter(a=>!a.completed)
+    .sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate)).slice(0,4);
+  document.getElementById('ov-tasks-mini').innerHTML = pending.length ? pending.map(a => {
+    const diff = Math.round((new Date(a.dueDate)-today)/(864e5));
+    const dLabel = diff<0?`${Math.abs(diff)}d overdue`:diff===0?'Today':diff===1?'Tomorrow':`In ${diff}d`;
+    const dColor = diff<0?'var(--red)':diff<=1?'var(--yellow)':'var(--muted)';
+    return `<div class="mini-asgn">
+      <span>${a.name}</span>
+      <span style="color:${dColor};font-size:11px;font-weight:600;white-space:nowrap;margin-left:8px;">${dLabel}</span>
+    </div>`;
+  }).join('') : '<div style="color:var(--muted);font-size:13px;">All caught up! ✓</div>';
+
+  // mini exams
+  const upcomingExams = planner.exams.filter(e=>new Date(e.date)>=today)
+    .sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
+  document.getElementById('ov-exams-mini').innerHTML = upcomingExams.length ? upcomingExams.map(e => {
+    const diff = Math.round((new Date(e.date)-today)/864e5);
+    const cdColor = diff<=3?'var(--red)':diff<=7?'var(--yellow)':'var(--green)';
+    return `<div class="mini-exam">
+      <div>
+        <div style="font-weight:600;">${e.name}</div>
+        <div style="font-size:11px;color:var(--muted);">${e.subject}</div>
+      </div>
+      <div class="mini-cd" style="color:${cdColor}">${diff}d</div>
+    </div>`;
+  }).join('') : '<div style="color:var(--muted);font-size:13px;">No upcoming exams</div>';
+
+  // mini planner week
+  const todayClasses = planner.classes.filter(c => {
+    const dayIdx = (today.getDay()+6)%7; // 0=Mon
+    return c.day === dayIdx && dayIdx < 5;
+  }).sort((a,b)=>a.startHour-b.startHour);
+  document.getElementById('ov-planner-mini').innerHTML = todayClasses.length
+    ? todayClasses.map(c => {
+        const col = scolor(c.subject);
+        return `<div class="mini-exam">
+          <div>
+            <div style="font-weight:600;">${c.name}</div>
+            <div style="font-size:11px;color:var(--muted);">${fmtT(c.startHour,c.startMin)} – ${fmtT(c.endHour,c.endMin)}</div>
+          </div>
+          <div style="width:8px;height:8px;border-radius:50%;background:${col};"></div>
+        </div>`;
+      }).join('')
+    : '<div style="color:var(--muted);font-size:13px;">No classes today</div>';
 }
 
-function changeWeek(dir) { weekOffset += dir; renderSchedule(); }
-function goToday() { weekOffset = 0; renderSchedule(); }
+/* ═══════════════════════════════════════════════
+   GRADES
+═══════════════════════════════════════════════ */
+function renderGrades() {
+  // student tabs
+  const tabs = document.getElementById('student-tabs');
+  const students = Object.keys(gradesData);
+  if (!activeStudent && students.length) activeStudent = students[0];
+  tabs.innerHTML = students.map(id =>
+    `<button class="student-tab ${id===activeStudent?'active':''}" onclick="selectStudent('${id}')">${gradesData[id].studentName}</button>`
+  ).join('');
+
+  // sidebar
+  document.getElementById('sb-students-grades').innerHTML = students.map(id =>
+    `<button class="sb-item ${id===activeStudent?'active':''}" onclick="selectStudent('${id}')">${gradesData[id].studentName}</button>`
+  ).join('');
+
+  if (!students.length) {
+    document.getElementById('grade-body').innerHTML = `<div class="empty"><div class="empty-icon">🎓</div><div class="empty-title">No data yet</div><div class="empty-sub">Import from LearnStage or load demo data.</div></div>`;
+    document.getElementById('grade-stats').style.display='none';
+    document.getElementById('import-strip').style.display='flex';
+    return;
+  }
+
+  const sd = gradesData[activeStudent];
+  if (!sd) return;
+  document.getElementById('grades-title').textContent = `${sd.studentName}'s Grades`;
+  document.getElementById('import-strip').style.display='flex';
+  document.getElementById('grade-stats').style.display='grid';
+
+  // stats
+  let done=0,total=0,gradeSum=0,gradeCount=0;
+  (sd.courses||[]).forEach(c=>{
+    (c.sections||[]).forEach(sec=>sec.assignments.forEach(a=>{total++;if(a.completed)done++;}));
+    if(c.currentGrade){gradeSum+=parseFloat(c.currentGrade);gradeCount++;}
+  });
+  document.getElementById('gs-courses').textContent = sd.courses.length;
+  document.getElementById('gs-grade').textContent   = gradeCount?(gradeSum/gradeCount).toFixed(1):'—';
+  document.getElementById('gs-done').textContent    = done;
+  document.getElementById('gs-remain').textContent  = total-done;
+
+  if (detailCourse !== null) {
+    renderCourseDetail(sd.courses[detailCourse], detailCourse);
+  } else {
+    renderCourseGrid(sd);
+  }
+}
+
+function selectStudent(id) {
+  activeStudent = id;
+  detailCourse = null;
+  renderGrades();
+}
+
+function renderCourseGrid(sd) {
+  const html = (sd.courses||[]).map((c,i) => {
+    const col = scolor(c.subject);
+    const csc = sc(c.subject);
+    let done=0,total=0;
+    (c.sections||[]).forEach(sec=>sec.assignments.forEach(a=>{total++;if(a.completed)done++;}));
+    const pct = total ? Math.round(done/total*100) : 0;
+    const g = c.currentGrade || 0;
+    const gClass = g>=90?'grade-A':g>=80?'grade-B':g>=70?'grade-C':g>=60?'grade-D':g?'grade-F':'grade-NA';
+    return `<div class="course-card" onclick="openCourseDetail(${i})" style="border-top:3px solid ${col}">
+      <div class="course-card-top">
+        <div><div class="course-name">${c.name}</div><div class="course-code">${c.code||''}</div></div>
+        <div class="course-grade"><div class="grade-val ${gClass}">${g||'—'}</div><div class="grade-label">Grade</div></div>
+      </div>
+      <div class="progress-bg"><div class="progress-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div class="progress-meta"><span>${done} of ${total} done</span><span>${pct}%</span></div>
+      <div class="course-footer">
+        <span class="subject-tag bc-${csc} tc-${csc}">${c.subject}</span>
+        <span class="remaining-badge">${total-done} remaining</span>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('grade-body').innerHTML = `<div class="courses-grid">${html}</div>`;
+}
+
+function openCourseDetail(idx) { detailCourse = idx; renderGrades(); }
+function closeCourseDetail()   { detailCourse = null; renderGrades(); }
+
+function renderCourseDetail(c, courseIdx) {
+  let html = `<div class="detail-panel">
+    <div class="detail-header">
+      <div class="detail-title">${c.name}</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeCourseDetail()">← Back</button>
+    </div>`;
+
+  (c.sections||[]).forEach((sec,si)=>{
+    const sdone = sec.assignments.filter(a=>a.completed).length;
+    html += `<div class="section-group">
+      <div class="section-name"><span>${sec.name}</span><span>${sdone}/${sec.assignments.length}</span></div>`;
+    (sec.assignments||[]).forEach((a,ai)=>{
+      const done = a.completed;
+      const pctStr = a.percentage?a.percentage.replace('%','').trim():'';
+      const pctNum = parseFloat(pctStr);
+      const pClass = pctNum>=90?'pct-A':pctNum>=80?'pct-B':pctNum>=70?'pct-C':pctNum>=60?'pct-D':pctStr?'pct-F':'pct-NA';
+      html += `<div class="assignment-row ${done?'done-row':''}">
+        <div class="a-check ${done?'checked':''}" onclick="toggleGradeAssignment('${activeStudent}',${courseIdx},${si},${ai})">${done?'✓':''}</div>
+        <div class="a-name">${a.name}</div>
+        <div class="a-score">${done&&a.receivedPoints!=null?a.receivedPoints:'—'}</div>
+        <div class="a-outof">/${a.outOf||'?'}</div>
+        <div class="a-pct ${pClass}">${pctStr?pctStr+'%':'—'}</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  document.getElementById('grade-body').innerHTML = html;
+}
+
+function toggleGradeAssignment(studentId, ci, si, ai) {
+  const a = gradesData[studentId].courses[ci].sections[si].assignments[ai];
+  a.completed = !a.completed;
+  saveGrades();
+  renderCourseDetail(gradesData[studentId].courses[ci], ci);
+}
+
+/* ═══════════════════════════════════════════════
+   GRADES IMPORT
+═══════════════════════════════════════════════ */
+function openGradesImport()  { document.getElementById('grades-import-modal').classList.add('open'); }
+function closeGradesImport() { document.getElementById('grades-import-modal').classList.remove('open'); }
+
+function doGradesImport() {
+  const raw = document.getElementById('grades-json').value.trim();
+  try {
+    const data = JSON.parse(raw);
+    if (!data.studentName || !data.courses) { alert('Unexpected format. Expected {studentName, courses:[...]}'); return; }
+    const id = data.studentName.toLowerCase().replace(/\s+/g,'_');
+    // preserve manual checks
+    const existing = gradesData[id];
+    if (existing) {
+      existing.courses.forEach(ec => {
+        const nc = data.courses.find(x=>x.name===ec.name);
+        if (!nc) return;
+        ec.sections.forEach((es,si) => {
+          (es.assignments||[]).forEach((ea,ai) => {
+            const na = nc.sections?.[si]?.assignments?.[ai];
+            if (na && ea.completed) na.completed = true;
+          });
+        });
+      });
+    }
+    gradesData[id] = data;
+    activeStudent = id;
+    saveGrades();
+    closeGradesImport();
+    document.getElementById('grades-json').value = '';
+    renderGrades();
+    toast(`Imported ${data.studentName}'s grades ✓`);
+  } catch(e) { alert('Invalid JSON: ' + e.message); }
+}
+
+function loadDemoData() {
+  if (confirm('Load demo data? This will reset grade data.')) {
+    gradesData = {};
+    planner.assignments = [];
+    planner.exams = [];
+    planner.classes = [];
+    seedAll();
+    renderGrades();
+    toast('Demo data loaded ✓');
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   PLANNER — TAB SWITCHING
+═══════════════════════════════════════════════ */
+function showPlannerTab(tab) {
+  ['schedule','assignments','exams'].forEach(t => {
+    document.getElementById('ptab-'+t).style.display = t===tab?'':'none';
+    const sb = document.getElementById('pn-'+t);
+    if (sb) sb.classList.toggle('active', t===tab);
+  });
+  ptab = tab;
+  if (tab==='schedule')    renderSchedule();
+  if (tab==='assignments') renderAssignments();
+  if (tab==='exams')       renderExams();
+}
+function renderPlannerTab() { showPlannerTab(ptab); }
+
+function updatePlannerBadges() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const we = new Date(today); we.setDate(today.getDate()+7);
+  const due = planner.assignments.filter(a=>!a.completed&&new Date(a.dueDate)>=today&&new Date(a.dueDate)<=we).length;
+  const exams = planner.exams.filter(e=>{ const d=new Date(e.date);d.setHours(0,0,0,0); return Math.round((d-today)/864e5)<=14&&d>=today; }).length;
+  document.getElementById('pb-due').textContent = due;
+  document.getElementById('pb-exams').textContent = exams;
+}
+
+/* ═══════════════════════════════════════════════
+   SCHEDULE
+═══════════════════════════════════════════════ */
+function getWeekStart(off=0) {
+  const n=new Date(); const d=n.getDay();
+  const m=new Date(n); m.setDate(n.getDate()-(d===0?6:d-1)+off*7); m.setHours(0,0,0,0); return m;
+}
+function changeWeek(d) { weekOffset+=d; renderSchedule(); }
+function goToday()      { weekOffset=0;  renderSchedule(); }
+function fmtT(h,m) { return `${h>12?h-12:h}:${String(m).padStart(2,'0')}${h>=12?'pm':'am'}`; }
 
 function renderSchedule() {
   const ws = getWeekStart(weekOffset);
   const we = new Date(ws); we.setDate(we.getDate()+4);
-  const fmt = (d) => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const fmt = d => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
   document.getElementById('week-label').textContent = `${fmt(ws)} – ${fmt(we)}`;
-
   const today = new Date();
   const grid = document.getElementById('week-grid');
 
-  // header row
-  let html = '<div class="cal-day-header time-col"></div>';
+  let html = '<div class="cal-head tc"></div>';
   for (let d=0;d<5;d++) {
-    const dd = new Date(ws); dd.setDate(ws.getDate()+d);
-    const isToday = dd.toDateString()===today.toDateString();
-    const numHtml = isToday
-      ? `<div class="cal-day-num today">${dd.getDate()}</div>`
-      : `<div class="cal-day-num">${dd.getDate()}</div>`;
-    html += `<div class="cal-day-header"><div class="cal-day-name">${DAYS[d]}</div>${numHtml}</div>`;
+    const dd=new Date(ws); dd.setDate(ws.getDate()+d);
+    const isT = dd.toDateString()===today.toDateString();
+    const num = isT ? `<div class="cal-day-num today-num">${dd.getDate()}</div>` : `<div class="cal-day-num">${dd.getDate()}</div>`;
+    html += `<div class="cal-head"><div class="cal-day-name">${DAYS[d]}</div>${num}</div>`;
   }
-
-  // body rows
-  for (let h of HOURS) {
-    html += `<div class="cal-time-cell">${h>12?h-12:h}${h>=12?'pm':'am'}</div>`;
+  for (const h of HOURS) {
+    html += `<div class="cal-time">${h>12?h-12:h}${h>=12?'pm':'am'}</div>`;
     for (let d=0;d<5;d++) {
-      // find classes in this cell
-      const cellClasses = state.classes.filter(c => c.day===d && c.startHour===h);
-      let eventsHtml = '';
-      for (const c of cellClasses) {
-        const span = (c.endHour + c.endMin/60) - (c.startHour + c.startMin/60);
-        const heightPx = span * 50 - 4;
-        const col = subjectColor(c.subject);
-        eventsHtml += `<div class="cal-event bg-${col}" style="height:${heightPx}px;top:2px;" title="${c.name}">
-          <div class="cal-event-name text-${col}">${c.name}</div>
-          <div class="cal-event-time">${fmtTime(c.startHour,c.startMin)}–${fmtTime(c.endHour,c.endMin)}</div>
+      const events = planner.classes.filter(c=>c.day===d&&c.startHour===h);
+      let ev='';
+      for (const c of events) {
+        const span=(c.endHour+c.endMin/60)-(c.startHour+c.startMin/60);
+        const ht=span*50-4;
+        const col=sc(c.subject);
+        ev+=`<div class="cal-event bc-${col}" style="height:${ht}px;top:2px;" title="${c.name}">
+          <div class="cal-event-name tc-${col}">${c.name}</div>
+          <div class="cal-event-time">${fmtT(c.startHour,c.startMin)}–${fmtT(c.endHour,c.endMin)}</div>
         </div>`;
       }
-      html += `<div class="cal-cell">${eventsHtml}</div>`;
+      html+=`<div class="cal-cell">${ev}</div>`;
     }
   }
-
-  grid.innerHTML = html;
+  grid.innerHTML=html;
 }
 
-function fmtTime(h,m) {
-  const ampm = h>=12?'pm':'am';
-  const hh = h>12?h-12:h;
-  return `${hh}:${String(m).padStart(2,'0')}${ampm}`;
-}
-
-// ── ASSIGNMENTS ───────────────────────────────────────
-let currentFilter = 'all';
-
-function setFilter(f, el) {
-  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+/* ═══════════════════════════════════════════════
+   ASSIGNMENTS
+═══════════════════════════════════════════════ */
+function setAFilter(f,el) {
+  document.querySelectorAll('#ptab-assignments .chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  currentFilter = f;
+  plannerFilter=f;
   renderAssignments();
 }
 
 function renderAssignments() {
-  updateStats();
-  const list = document.getElementById('assignment-list');
-  const today = new Date(); today.setHours(0,0,0,0);
-  const weekEnd = new Date(today); weekEnd.setDate(today.getDate()+7);
+  const today=new Date(); today.setHours(0,0,0,0);
+  const we=new Date(today); we.setDate(today.getDate()+7);
+  const over  = planner.assignments.filter(a=>!a.completed&&new Date(a.dueDate)<today).length;
+  const soon  = planner.assignments.filter(a=>!a.completed&&new Date(a.dueDate)>=today&&new Date(a.dueDate)<=we).length;
+  const done  = planner.assignments.filter(a=>a.completed).length;
+  document.getElementById('ps-total').textContent = planner.assignments.length;
+  document.getElementById('ps-over').textContent  = over;
+  document.getElementById('ps-soon').textContent  = soon;
+  document.getElementById('ps-done').textContent  = done;
 
-  let items = state.assignments.slice().sort((a,b)=>{
-    if (a.completed !== b.completed) return a.completed ? 1 : -1;
-    return new Date(a.dueDate) - new Date(b.dueDate);
-  });
+  let items = planner.assignments.slice().sort((a,b)=>{ if(a.completed!==b.completed) return a.completed?1:-1; return new Date(a.dueDate)-new Date(b.dueDate); });
+  if (plannerFilter==='pending')   items=items.filter(a=>!a.completed);
+  else if (plannerFilter==='completed') items=items.filter(a=>a.completed);
+  else if (plannerFilter==='overdue')   items=items.filter(a=>!a.completed&&new Date(a.dueDate)<today);
+  else if (SUBJECTS.includes(plannerFilter)) items=items.filter(a=>a.subject===plannerFilter);
 
-  if (currentFilter === 'pending') items = items.filter(a=>!a.completed);
-  else if (currentFilter === 'completed') items = items.filter(a=>a.completed);
-  else if (currentFilter === 'overdue') items = items.filter(a=>!a.completed && new Date(a.dueDate)<today);
-  else if (SUBJECTS.includes(currentFilter)) items = items.filter(a=>a.subject===currentFilter);
+  const list=document.getElementById('asgn-list');
+  if (!items.length) { list.innerHTML='<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">All clear!</div><div class="empty-sub">No assignments match this filter.</div></div>'; return; }
 
-  if (!items.length) {
-    list.innerHTML = `<div class="empty-state">
-      <div class="empty-state-icon">✅</div>
-      <div class="empty-state-title">All clear!</div>
-      <div class="empty-state-sub">No assignments match this filter.</div>
-    </div>`;
-    return;
-  }
-
-  list.innerHTML = items.map(a => {
-    const due = new Date(a.dueDate); due.setHours(0,0,0,0);
-    const col = subjectColor(a.subject);
-    let dueClass='due-ok', dueText='';
-    const diff = Math.round((due-today)/(1000*60*60*24));
-    if (!a.completed) {
-      if (diff < 0) { dueClass='due-overdue'; dueText=`${Math.abs(diff)}d overdue`; }
-      else if (diff === 0) { dueClass='due-soon'; dueText='Due today'; }
-      else if (diff === 1) { dueClass='due-soon'; dueText='Due tomorrow'; }
-      else if (diff <= 7) { dueClass='due-soon'; dueText=`Due in ${diff}d`; }
-      else { dueClass='due-ok'; dueText=`Due ${due.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`; }
-    } else {
-      dueText='Completed';
-    }
-    return `<div class="assignment-card ${a.completed?'completed':''} border-${col}">
-      <div class="a-check ${a.completed?'checked':''}" onclick="toggleAssignment('${a.id}')"></div>
-      <div class="a-info">
-        <div class="a-name">${a.name}</div>
-        <div class="a-meta">
-          <span class="a-subject-tag bg-${col} text-${col}">${a.subject}</span>
+  list.innerHTML=items.map(a=>{
+    const due=new Date(a.dueDate); due.setHours(0,0,0,0);
+    const diff=Math.round((due-today)/864e5);
+    const col=sc(a.subject);
+    let dClass='due-ok',dText='';
+    if(!a.completed){
+      if(diff<0){dClass='due-over';dText=`${Math.abs(diff)}d overdue`;}
+      else if(diff===0){dClass='due-soon';dText='Due today';}
+      else if(diff===1){dClass='due-soon';dText='Due tomorrow';}
+      else if(diff<=7){dClass='due-soon';dText=`In ${diff}d`;}
+      else{dClass='due-ok';dText=`${due.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`;}
+    } else { dText='Completed'; }
+    return `<div class="asgn-card ${a.completed?'asgn-done':''} brd-${col}">
+      <div class="a-check ${a.completed?'checked':''}" onclick="toggleAsgn('${a.id}')">${a.completed?'✓':''}</div>
+      <div class="asgn-info">
+        <div class="asgn-name">${a.name}</div>
+        <div class="asgn-meta">
+          <span class="subj-tag bc-${col} tc-${col}">${a.subject}</span>
           <span>${a.type||''}</span>
-          <span class="due-badge ${dueClass}">${dueText}</span>
+          <span class="due-badge ${dClass}">${dText}</span>
         </div>
       </div>
-      <div class="a-actions">
-        <button class="btn btn-ghost btn-sm" onclick="editAssignment('${a.id}')">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteAssignment('${a.id}')">✕</button>
+      <div class="asgn-acts">
+        <button class="btn btn-ghost btn-xs" onclick="editAsgn('${a.id}')">Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteAsgn('${a.id}')">✕</button>
       </div>
     </div>`;
   }).join('');
 }
 
-function toggleAssignment(id) {
-  const a = state.assignments.find(x=>x.id===id);
-  if (a) { a.completed = !a.completed; save(); renderAssignments(); }
-}
+function toggleAsgn(id){ const a=planner.assignments.find(x=>x.id===id); if(a){a.completed=!a.completed;savePlanner();renderAssignments();} }
+function deleteAsgn(id){ planner.assignments=planner.assignments.filter(x=>x.id!==id); savePlanner();renderAssignments();toast('Removed'); }
+function editAsgn(id){ const a=planner.assignments.find(x=>x.id===id); if(a)openPlannerModal('assignment',a); }
 
-function deleteAssignment(id) {
-  state.assignments = state.assignments.filter(x=>x.id!==id);
-  save(); renderAssignments();
-  toast('Assignment removed');
-}
-
-function editAssignment(id) {
-  const a = state.assignments.find(x=>x.id===id);
-  if (!a) return;
-  openAddModal('assignment', a);
-}
-
-function updateStats() {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const weekEnd = new Date(today); weekEnd.setDate(today.getDate()+7);
-  const all = state.assignments;
-  document.getElementById('s-total').textContent = all.length;
-  document.getElementById('s-overdue').textContent = all.filter(a=>!a.completed && new Date(a.dueDate)<today).length;
-  document.getElementById('s-due-soon').textContent = all.filter(a=>!a.completed && new Date(a.dueDate)>=today && new Date(a.dueDate)<=weekEnd).length;
-  document.getElementById('s-done').textContent = all.filter(a=>a.completed).length;
-}
-
-function updateBadges() {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const weekEnd = new Date(today); weekEnd.setDate(today.getDate()+7);
-  const dueSoon = state.assignments.filter(a=>!a.completed && new Date(a.dueDate)>=today && new Date(a.dueDate)<=weekEnd).length;
-  const examCount = state.exams.filter(e=>{
-    const d = new Date(e.date); d.setHours(0,0,0,0);
-    const diff = Math.round((d-today)/(1000*60*60*24));
-    return diff>=0 && diff<=14;
-  }).length;
-  document.getElementById('badge-due').textContent = dueSoon;
-  document.getElementById('badge-exams').textContent = examCount;
-}
-
-// ── EXAMS ─────────────────────────────────────────────
+/* ═══════════════════════════════════════════════
+   EXAMS
+═══════════════════════════════════════════════ */
 function renderExams() {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const grid = document.getElementById('exams-grid');
-
-  const sorted = state.exams.slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
-
-  if (!sorted.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
-      <div class="empty-state-icon">🎯</div>
-      <div class="empty-state-title">No exams yet</div>
-      <div class="empty-state-sub">Add upcoming tests and exams to track countdowns.</div>
-    </div>`;
-    return;
-  }
-
-  grid.innerHTML = sorted.map(e => {
-    const d = new Date(e.date); d.setHours(0,0,0,0);
-    const diff = Math.round((d-today)/(1000*60*60*24));
-    const col = subjectColor(e.subject);
-    let cdClass='ok', cdText='';
-    if (diff < 0) { cdClass=''; cdText='Past'; }
-    else if (diff===0) { cdClass='urgent'; cdText='TODAY'; }
-    else if (diff<=3) { cdClass='urgent'; cdText=`${diff}d`; }
-    else if (diff<=7) { cdClass='warn'; cdText=`${diff}d`; }
-    else { cdClass='ok'; cdText=`${diff}d`; }
-
+  const today=new Date(); today.setHours(0,0,0,0);
+  const sorted=planner.exams.slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const grid=document.getElementById('exams-grid');
+  if(!sorted.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🎯</div><div class="empty-title">No exams yet</div><div class="empty-sub">Add upcoming tests and exams.</div></div>';return;}
+  grid.innerHTML=sorted.map(e=>{
+    const d=new Date(e.date);d.setHours(0,0,0,0);
+    const diff=Math.round((d-today)/864e5);
+    const col=scolor(e.subject);
+    let cdClass='ok',cdText=diff<0?'Past':diff===0?'TODAY':`${diff}d`;
+    if(diff>=0&&diff<=3)cdClass='urg'; else if(diff<=7)cdClass='warn';
     return `<div class="exam-card">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;" class="color-${col}" style="background:currentColor"></div>
-      <style>.exam-card:nth-child(auto) {};</style>
-      <div class="exam-subject text-${col}" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">${e.subject}</div>
+      <div class="exam-card-bar" style="background:${col}"></div>
+      <div class="exam-subj tc-${sc(e.subject)}">${e.subject}</div>
       <div class="exam-name">${e.name}</div>
-      <div class="exam-countdown ${cdClass}">${cdText}</div>
+      <div class="exam-cd ${cdClass}">${cdText}</div>
       <div class="exam-date">${d.toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'})}</div>
-      ${e.notes?`<div style="font-size:12px;color:var(--muted);margin-top:6px;">📌 ${e.notes}</div>`:''}
-      <div class="exam-actions">
-        <button class="btn btn-ghost btn-sm" onclick="editExam('${e.id}')">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteExam('${e.id}')">✕</button>
+      ${e.notes?`<div class="exam-notes">📌 ${e.notes}</div>`:''}
+      <div class="exam-acts">
+        <button class="btn btn-ghost btn-xs" onclick="editExam('${e.id}')">Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteExam('${e.id}')">✕</button>
       </div>
     </div>`;
   }).join('');
-
-  // inject colored top borders via inline styles (CSS class approach for colors)
-  document.querySelectorAll('.exam-card').forEach((card, i) => {
-    const e = sorted[i];
-    const colors = {eng:'#6c8fff',math:'#a78bfa',sci:'#34d399',ss:'#fbbf24',elec:'#f472b6',other:'#94a3b8'};
-    const col = colors[subjectColor(e.subject)] || '#94a3b8';
-    card.style.setProperty('--card-accent', col);
-    const bar = card.querySelector('div[style*="position:absolute"]');
-    if (bar) bar.style.background = col;
-  });
 }
 
-function deleteExam(id) {
-  state.exams = state.exams.filter(x=>x.id!==id);
-  save(); renderExams();
-  toast('Exam removed');
-}
+function deleteExam(id){ planner.exams=planner.exams.filter(x=>x.id!==id);savePlanner();renderExams();toast('Removed'); }
+function editExam(id)  { const e=planner.exams.find(x=>x.id===id);if(e)openPlannerModal('exam',e); }
 
-function editExam(id) {
-  const e = state.exams.find(x=>x.id===id);
-  if (!e) return;
-  openAddModal('exam', e);
-}
+/* ═══════════════════════════════════════════════
+   PLANNER MODAL
+═══════════════════════════════════════════════ */
+const ATYPES=['Homework','Essay','Lab Report','Quiz Prep','Project','Reading','Other'];
 
-// ── MODAL ─────────────────────────────────────────────
-let modalType = 'assignment';
-let editingId = null;
-
-function openAddModal(type, existing=null) {
-  modalType = type;
-  editingId = existing?.id || null;
-  const titles = {assignment:'Task / Assignment',exam:'Exam or Test',class:'Class / Period'};
-  document.getElementById('modal-title').textContent = (existing?'Edit ':'Add ') + titles[type];
-
-  if (type==='assignment') {
-    document.getElementById('modal-body').innerHTML = `
-      <div class="form-group">
-        <label class="form-label">Assignment Name</label>
-        <input class="form-input" id="f-name" placeholder="e.g. Ch.4 Reading Response" value="${existing?.name||''}">
+function openPlannerModal(type,ex=null) {
+  pmType=type; pmEditId=ex?.id||null;
+  const titles={assignment:'Task / Assignment',exam:'Exam or Test',class:'Class / Period'};
+  document.getElementById('pm-title').textContent=(ex?'Edit ':'Add ')+titles[type];
+  if(type==='assignment'){
+    document.getElementById('pm-body').innerHTML=`
+      <div class="fg"><label>Assignment Name</label><input class="fi" id="pm-name" placeholder="e.g. Ch.4 Reading Response" value="${ex?.name||''}"></div>
+      <div class="form-row2">
+        <div class="fg"><label>Subject</label><select class="fi" id="pm-subject">${SUBJECTS.map(s=>`<option value="${s}"${ex?.subject===s?' selected':''}>${s}</option>`).join('')}</select></div>
+        <div class="fg"><label>Type</label><select class="fi" id="pm-type">${ATYPES.map(t=>`<option value="${t}"${ex?.type===t?' selected':''}>${t}</option>`).join('')}</select></div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Subject</label>
-          <select class="form-input" id="f-subject">
-            ${SUBJECTS.map(s=>`<option value="${s}" ${existing?.subject===s?'selected':''}>${s}</option>`).join('')}
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Type</label>
-          <select class="form-input" id="f-type">
-            ${['Homework','Essay','Lab Report','Quiz Prep','Project','Reading','Other'].map(t=>`<option value="${t}" ${existing?.type===t?'selected':''}>${t}</option>`).join('')}
-          </select>
-        </div>
+      <div class="fg"><label>Due Date</label><input class="fi" id="pm-due" type="date" value="${ex?.dueDate||''}"></div>`;
+  } else if(type==='exam'){
+    document.getElementById('pm-body').innerHTML=`
+      <div class="fg"><label>Exam Name</label><input class="fi" id="pm-name" placeholder="e.g. Unit 3 Test" value="${ex?.name||''}"></div>
+      <div class="form-row2">
+        <div class="fg"><label>Subject</label><select class="fi" id="pm-subject">${SUBJECTS.map(s=>`<option value="${s}"${ex?.subject===s?' selected':''}>${s}</option>`).join('')}</select></div>
+        <div class="fg"><label>Date</label><input class="fi" id="pm-due" type="date" value="${ex?.date||''}"></div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Due Date</label>
-        <input class="form-input" id="f-due" type="date" value="${existing?.dueDate||''}">
-      </div>`;
-  } else if (type==='exam') {
-    document.getElementById('modal-body').innerHTML = `
-      <div class="form-group">
-        <label class="form-label">Exam Name</label>
-        <input class="form-input" id="f-name" placeholder="e.g. Unit 3 Test" value="${existing?.name||''}">
+      <div class="fg"><label>Notes (optional)</label><input class="fi" id="pm-notes" placeholder="e.g. Chapters 7-9" value="${ex?.notes||''}"></div>`;
+  } else if(type==='class'){
+    document.getElementById('pm-body').innerHTML=`
+      <div class="fg"><label>Class Name</label><input class="fi" id="pm-name" placeholder="e.g. Algebra II" value="${ex?.name||''}"></div>
+      <div class="form-row2">
+        <div class="fg"><label>Subject</label><select class="fi" id="pm-subject">${SUBJECTS.map(s=>`<option value="${s}"${ex?.subject===s?' selected':''}>${s}</option>`).join('')}</select></div>
+        <div class="fg"><label>Day</label><select class="fi" id="pm-day">${DAYS.map((d,i)=>`<option value="${i}"${ex?.day===i?' selected':''}>${d}</option>`).join('')}</select></div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Subject</label>
-          <select class="form-input" id="f-subject">
-            ${SUBJECTS.map(s=>`<option value="${s}" ${existing?.subject===s?'selected':''}>${s}</option>`).join('')}
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Date</label>
-          <input class="form-input" id="f-due" type="date" value="${existing?.date||''}">
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Notes (optional)</label>
-        <input class="form-input" id="f-notes" placeholder="e.g. Chapters 7-9, polynomials" value="${existing?.notes||''}">
-      </div>`;
-  } else if (type==='class') {
-    document.getElementById('modal-body').innerHTML = `
-      <div class="form-group">
-        <label class="form-label">Class Name</label>
-        <input class="form-input" id="f-name" placeholder="e.g. Algebra II" value="${existing?.name||''}">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Subject</label>
-          <select class="form-input" id="f-subject">
-            ${SUBJECTS.map(s=>`<option value="${s}" ${existing?.subject===s?'selected':''}>${s}</option>`).join('')}
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Day of Week</label>
-          <select class="form-input" id="f-day">
-            ${DAYS.map((d,i)=>`<option value="${i}" ${existing?.day===i?'selected':''}>${d}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Start Time</label>
-          <input class="form-input" id="f-start" type="time" value="${existing?`${String(existing.startHour).padStart(2,'0')}:${String(existing.startMin).padStart(2,'0')}`:'08:00'}">
-        </div>
-        <div class="form-group">
-          <label class="form-label">End Time</label>
-          <input class="form-input" id="f-end" type="time" value="${existing?`${String(existing.endHour).padStart(2,'0')}:${String(existing.endMin).padStart(2,'0')}`:'09:00'}">
-        </div>
+      <div class="form-row2">
+        <div class="fg"><label>Start Time</label><input class="fi" id="pm-start" type="time" value="${ex?pad(ex.startHour)+':'+pad(ex.startMin):'08:00'}"></div>
+        <div class="fg"><label>End Time</label><input class="fi" id="pm-end" type="time" value="${ex?pad(ex.endHour)+':'+pad(ex.endMin):'09:00'}"></div>
       </div>`;
   }
-
-  document.getElementById('add-modal').classList.add('open');
+  document.getElementById('planner-modal').classList.add('open');
 }
+function closePlannerModal(){ document.getElementById('planner-modal').classList.remove('open'); pmEditId=null; }
+function pad(n){ return String(n).padStart(2,'0'); }
 
-function closeModal() {
-  document.getElementById('add-modal').classList.remove('open');
-  editingId = null;
-}
-
-function saveModal() {
-  const name = document.getElementById('f-name')?.value.trim();
-  if (!name) { alert('Please enter a name.'); return; }
-
-  if (modalType==='assignment') {
-    const obj = {
-      id: editingId || 'a'+Date.now(),
-      name,
-      subject: document.getElementById('f-subject').value,
-      type: document.getElementById('f-type').value,
-      dueDate: document.getElementById('f-due').value,
-      completed: false
-    };
-    if (editingId) {
-      const idx = state.assignments.findIndex(x=>x.id===editingId);
-      if (idx>=0) { obj.completed = state.assignments[idx].completed; state.assignments[idx]=obj; }
-    } else {
-      state.assignments.push(obj);
-    }
-    save(); renderAssignments();
-    toast(editingId?'Assignment updated':'Assignment added ✓');
-  } else if (modalType==='exam') {
-    const obj = {
-      id: editingId || 'e'+Date.now(),
-      name,
-      subject: document.getElementById('f-subject').value,
-      date: document.getElementById('f-due').value,
-      notes: document.getElementById('f-notes').value.trim()
-    };
-    if (editingId) {
-      const idx = state.exams.findIndex(x=>x.id===editingId);
-      if (idx>=0) state.exams[idx]=obj;
-    } else {
-      state.exams.push(obj);
-    }
-    save(); renderExams();
-    toast(editingId?'Exam updated':'Exam added ✓');
-  } else if (modalType==='class') {
-    const [sh,sm] = document.getElementById('f-start').value.split(':').map(Number);
-    const [eh,em] = document.getElementById('f-end').value.split(':').map(Number);
-    const obj = {
-      id: editingId || 'c'+Date.now(),
-      name,
-      subject: document.getElementById('f-subject').value,
-      day: parseInt(document.getElementById('f-day').value),
-      startHour: sh, startMin: sm,
-      endHour: eh, endMin: em
-    };
-    if (editingId) {
-      const idx = state.classes.findIndex(x=>x.id===editingId);
-      if (idx>=0) state.classes[idx]=obj;
-    } else {
-      state.classes.push(obj);
-    }
-    save(); renderSchedule();
-    toast(editingId?'Class updated':'Class added ✓');
+function savePlannerModal(){
+  const name=document.getElementById('pm-name')?.value.trim();
+  if(!name){alert('Please enter a name.');return;}
+  if(pmType==='assignment'){
+    const obj={id:pmEditId||'a'+Date.now(),name,subject:document.getElementById('pm-subject').value,type:document.getElementById('pm-type').value,dueDate:document.getElementById('pm-due').value,completed:false};
+    if(pmEditId){const i=planner.assignments.findIndex(x=>x.id===pmEditId);if(i>=0){obj.completed=planner.assignments[i].completed;planner.assignments[i]=obj;}}
+    else planner.assignments.push(obj);
+    savePlanner();renderAssignments();
+  } else if(pmType==='exam'){
+    const obj={id:pmEditId||'e'+Date.now(),name,subject:document.getElementById('pm-subject').value,date:document.getElementById('pm-due').value,notes:document.getElementById('pm-notes').value.trim()};
+    if(pmEditId){const i=planner.exams.findIndex(x=>x.id===pmEditId);if(i>=0)planner.exams[i]=obj;}
+    else planner.exams.push(obj);
+    savePlanner();renderExams();
+  } else if(pmType==='class'){
+    const [sh,sm]=document.getElementById('pm-start').value.split(':').map(Number);
+    const [eh,em]=document.getElementById('pm-end').value.split(':').map(Number);
+    const obj={id:pmEditId||'c'+Date.now(),name,subject:document.getElementById('pm-subject').value,day:parseInt(document.getElementById('pm-day').value),startHour:sh,startMin:sm,endHour:eh,endMin:em};
+    if(pmEditId){const i=planner.classes.findIndex(x=>x.id===pmEditId);if(i>=0)planner.classes[i]=obj;}
+    else planner.classes.push(obj);
+    savePlanner();renderSchedule();
   }
-
-  closeModal();
+  closePlannerModal();
+  toast((pmEditId?'Updated':'Added')+' ✓');
 }
 
-// ── IMPORT ────────────────────────────────────────────
-function openImportModal() { document.getElementById('import-modal').classList.add('open'); }
+/* ═══════════════════════════════════════════════
+   LEARNSTAGE ASSIGNMENT IMPORT
+═══════════════════════════════════════════════ */
+function openImportModal()  { document.getElementById('import-modal').classList.add('open'); }
 function closeImportModal() { document.getElementById('import-modal').classList.remove('open'); }
 
-function doImport() {
-  const raw = document.getElementById('import-json').value.trim();
-  if (!raw) { alert('Please paste JSON data.'); return; }
-  let items;
-  try { items = JSON.parse(raw); } catch(e) { alert('Invalid JSON. Please check the format.'); return; }
-  if (!Array.isArray(items)) { alert('Expected an array of assignments.'); return; }
-
-  const existingChecked = new Set(state.assignments.filter(a=>a.completed).map(a=>a.name));
-  let added=0, updated=0;
-
-  for (const item of items) {
-    if (!item.name) continue;
-    const existing = state.assignments.find(a=>a.name===item.name && a.subject===item.subject);
-    if (existing) {
-      existing.dueDate = item.dueDate || existing.dueDate;
-      existing.type = item.type || existing.type;
-      updated++;
-    } else {
-      state.assignments.push({
-        id: 'a'+Date.now()+Math.random(),
-        name: item.name,
-        subject: item.subject || 'Other',
-        type: item.type || 'Homework',
-        dueDate: item.dueDate || '',
-        completed: existingChecked.has(item.name)
-      });
-      added++;
-    }
+function doImport(){
+  const raw=document.getElementById('import-json').value.trim();
+  if(!raw){alert('Paste JSON first.');return;}
+  let items; try{items=JSON.parse(raw);}catch(e){alert('Invalid JSON.');return;}
+  if(!Array.isArray(items)){alert('Expected an array.');return;}
+  const checked=new Set(planner.assignments.filter(a=>a.completed).map(a=>a.name));
+  let added=0,updated=0;
+  for(const item of items){
+    if(!item.name)continue;
+    const ex=planner.assignments.find(a=>a.name===item.name&&a.subject===item.subject);
+    if(ex){ex.dueDate=item.dueDate||ex.dueDate;ex.type=item.type||ex.type;updated++;}
+    else{planner.assignments.push({id:'a'+Date.now()+Math.random(),name:item.name,subject:item.subject||'Other',type:item.type||'Homework',dueDate:item.dueDate||'',completed:checked.has(item.name)});added++;}
   }
-
-  save();
-  if (currentPage==='assignments') renderAssignments();
-  closeImportModal();
-  document.getElementById('import-json').value = '';
-  toast(`Imported: ${added} new, ${updated} updated ✓`);
+  savePlanner();renderAssignments();closeImportModal();document.getElementById('import-json').value='';
+  toast(`${added} new, ${updated} updated ✓`);
 }
 
-// ── UTILS ─────────────────────────────────────────────
-function clearAll() {
-  if (!confirm('Clear ALL planner data? This cannot be undone.')) return;
-  state = {assignments:[],exams:[],classes:[]};
-  save();
-  renderSchedule(); renderAssignments(); renderExams();
-  toast('All data cleared');
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+let tTimer;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent='✓ '+msg;el.classList.add('show');
+  clearTimeout(tTimer);tTimer=setTimeout(()=>el.classList.remove('show'),2500);
 }
 
-let toastTimer;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.innerHTML = '✓ ' + msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>el.classList.remove('show'), 2500);
+/* ═══════════════════════════════════════════════
+   FIREBASE SYNC (optional)
+═══════════════════════════════════════════════ */
+function initFirebase(){
+  fbGet('grades', d=>{gradesData=d;renderHome();renderGrades();});
+  fbGet('planner',d=>{planner=d;updatePlannerBadges();});
 }
 
-// close modals on overlay click
-document.getElementById('add-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal(); });
-document.getElementById('import-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeImportModal(); });
-
-// ── INIT ──────────────────────────────────────────────
-load();
-renderSchedule();
-updateBadges();
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+loadAll();
+updatePlannerBadges();
+renderHome();
+initFirebase();
 </script>
 </body>
 </html>
