@@ -641,7 +641,7 @@ a { color: inherit; text-decoration: none; }
 ═══════════════════════════════════════════════ */
 .overview-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 20px;
 }
@@ -1180,7 +1180,7 @@ function renderHome() {
   const today = new Date(); today.setHours(0,0,0,0);
   const weekEnd = new Date(today); weekEnd.setDate(today.getDate()+7);
 
-  // aggregate grades
+  // aggregate grades across all students
   let totalCourses=0, totalDone=0, gradeSum=0, gradeCount=0;
   Object.values(gradesData).forEach(sd => {
     (sd.courses||[]).forEach(c => {
@@ -1190,12 +1190,13 @@ function renderHome() {
     });
   });
   const avgGrade = gradeCount ? (gradeSum/gradeCount).toFixed(1) : '—';
-  const tasksDue = planner.assignments.filter(a=>!a.completed&&new Date(a.dueDate)>=today&&new Date(a.dueDate)<=weekEnd).length;
+  const loganTasks = planners.logan.assignments.filter(a=>!a.completed&&new Date(a.dueDate)>=today&&new Date(a.dueDate)<=weekEnd).length;
+  const peytonTasks = planners.peyton.assignments.filter(a=>!a.completed&&new Date(a.dueDate)>=today&&new Date(a.dueDate)<=weekEnd).length;
 
   document.getElementById('hs-courses').textContent = totalCourses || '—';
   document.getElementById('hs-done').textContent = totalDone || '—';
   document.getElementById('hs-avg').textContent = avgGrade;
-  document.getElementById('hs-tasks').textContent = tasksDue;
+  document.getElementById('hs-tasks').textContent = loganTasks + peytonTasks;
 
   // sidebar students
   const sbH = document.getElementById('sb-students-home');
@@ -1203,66 +1204,76 @@ function renderHome() {
     `<button class="sb-item" onclick="switchMain('grades')">${sd.studentName}</button>`
   ).join('');
 
-  // mini courses
-  const sd = gradesData[activeStudent||Object.keys(gradesData)[0]];
-  if (sd) {
-    document.getElementById('ov-student-name').textContent = sd.studentName;
-    document.getElementById('ov-courses-mini').innerHTML = (sd.courses||[]).slice(0,5).map(c => {
-      const col = scolor(c.subject);
-      const g = c.currentGrade || '—';
-      return `<div class="mini-course">
-        <div style="width:4px;height:32px;border-radius:2px;background:${col};flex-shrink:0;"></div>
-        <div class="mini-course-name">${c.name}</div>
-        <div class="mini-course-grade" style="color:${col}">${g}</div>
-      </div>`;
-    }).join('') || '<div style="color:var(--muted);font-size:13px;">No grade data</div>';
-  }
+  // helper: mini course list
+  const miniCourses = (sd) => (sd.courses||[]).slice(0,5).map(c => {
+    const col = scolor(c.subject);
+    return `<div class="mini-course">
+      <div style="width:4px;height:32px;border-radius:2px;background:${col};flex-shrink:0;"></div>
+      <div class="mini-course-name">${c.name}</div>
+      <div class="mini-course-grade" style="color:${col}">${c.currentGrade||'—'}</div>
+    </div>`;
+  }).join('') || '<div style="color:var(--muted);font-size:13px;">No data</div>';
 
-  // mini assignments
-  const pending = planner.assignments.filter(a=>!a.completed)
-    .sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate)).slice(0,4);
-  document.getElementById('ov-tasks-mini').innerHTML = pending.length ? pending.map(a => {
+  // helper: mini today classes
+  const miniToday = (pln) => {
+    const dayIdx = (today.getDay()+6)%7;
+    const classes = pln.classes.filter(c => c.day===dayIdx && dayIdx<5).sort((a,b)=>a.startHour-b.startHour);
+    if (!classes.length) return '<div style="color:var(--muted);font-size:13px;">No classes today</div>';
+    return classes.map(c => {
+      const col = scolor(c.subject);
+      return `<div class="mini-exam">
+        <div><div style="font-weight:600;">${c.name}</div><div style="font-size:11px;color:var(--muted);">${fmtT(c.startHour,c.startMin)} – ${fmtT(c.endHour,c.endMin)}</div></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:${col};"></div>
+      </div>`;
+    }).join('');
+  };
+
+  // upcoming assignments (both planners combined)
+  const pending = planners.logan.assignments.concat(planners.peyton.assignments)
+    .filter(a=>!a.completed).sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate)).slice(0,4);
+  const miniTasks = pending.length ? pending.map(a => {
     const diff = Math.round((new Date(a.dueDate)-today)/(864e5));
     const dLabel = diff<0?`${Math.abs(diff)}d overdue`:diff===0?'Today':diff===1?'Tomorrow':`In ${diff}d`;
     const dColor = diff<0?'var(--red)':diff<=1?'var(--yellow)':'var(--muted)';
-    return `<div class="mini-asgn">
-      <span>${a.name}</span>
-      <span style="color:${dColor};font-size:11px;font-weight:600;white-space:nowrap;margin-left:8px;">${dLabel}</span>
-    </div>`;
+    return `<div class="mini-asgn"><span>${a.name}</span><span style="color:${dColor};font-size:11px;font-weight:600;white-space:nowrap;margin-left:8px;">${dLabel}</span></div>`;
   }).join('') : '<div style="color:var(--muted);font-size:13px;">All caught up! ✓</div>';
 
-  // mini exams
-  const upcomingExams = planner.exams.filter(e=>new Date(e.date)>=today)
-    .sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
-  document.getElementById('ov-exams-mini').innerHTML = upcomingExams.length ? upcomingExams.map(e => {
+  // exam countdowns (both planners)
+  const upcomingExams = planners.logan.exams.concat(planners.peyton.exams)
+    .filter(e=>new Date(e.date)>=today).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,4);
+  const miniExams = upcomingExams.length ? upcomingExams.map(e => {
     const diff = Math.round((new Date(e.date)-today)/864e5);
     const cdColor = diff<=3?'var(--red)':diff<=7?'var(--yellow)':'var(--green)';
-    return `<div class="mini-exam">
-      <div>
-        <div style="font-weight:600;">${e.name}</div>
-        <div style="font-size:11px;color:var(--muted);">${e.subject}</div>
-      </div>
-      <div class="mini-cd" style="color:${cdColor}">${diff}d</div>
-    </div>`;
+    return `<div class="mini-exam"><div><div style="font-weight:600;">${e.name}</div><div style="font-size:11px;color:var(--muted);">${e.subject}</div></div><div class="mini-cd" style="color:${cdColor}">${diff}d</div></div>`;
   }).join('') : '<div style="color:var(--muted);font-size:13px;">No upcoming exams</div>';
 
-  // mini planner week
-  const todayClasses = planner.classes.filter(c => {
-    const dayIdx = (today.getDay()+6)%7; // 0=Mon
-    return c.day === dayIdx && dayIdx < 5;
-  }).sort((a,b)=>a.startHour-b.startHour);
-  document.getElementById('ov-planner-mini').innerHTML = todayClasses.length
-    ? todayClasses.map(c => {
-        const col = scolor(c.subject);
-        return `<div class="mini-exam">
-          <div>
-            <div style="font-weight:600;">${c.name}</div>
-            <div style="font-size:11px;color:var(--muted);">${fmtT(c.startHour,c.startMin)} – ${fmtT(c.endHour,c.endMin)}</div>
-          </div>
-          <div style="width:8px;height:8px;border-radius:50%;background:${col};"></div>
-        </div>`;
-      }).join('')
-    : '<div style="color:var(--muted);font-size:13px;">No classes today</div>';
+  const loganSD = gradesData['logan'];
+  const peytonSD = gradesData['peyton'];
+  const ovGrid = document.querySelector('#page-home .overview-grid');
+  if (ovGrid) {
+    ovGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    ovGrid.innerHTML = `
+      <div class="overview-card"><div class="ov-card-title" style="cursor:pointer" onclick="switchMain('grades')">📊 Logan's Grades</div>${loganSD ? miniCourses(loganSD) : '<div style="color:var(--muted);font-size:13px;">No data</div>'}</div>
+      <div class="overview-card"><div class="ov-card-title" style="cursor:pointer" onclick="switchMain('grades')">📊 Peyton's Grades</div>${peytonSD ? miniCourses(peytonSD) : '<div style="color:var(--muted);font-size:13px;">No data</div>'}</div>
+      <div class="overview-card"><div class="ov-card-title">📝 Upcoming Assignments</div>${miniTasks}</div>
+      <div class="overview-card"><div class="ov-card-title">🎯 Exam Countdowns</div>${miniExams}</div>
+      <div class="overview-card"><div class="ov-card-title">📅 Logan's Today</div>${miniToday(planners.logan)}</div>
+      <div class="overview-card"><div class="ov-card-title">📅 Peyton's Today</div>${miniToday(planners.peyton)}</div>
+    `;
+  }
+
+  // update bottom buttons
+  const mainContent = document.querySelector('#page-home .main-content');
+  if (mainContent) {
+    const lastDiv = mainContent.lastElementChild;
+    if (lastDiv && lastDiv.style !== undefined) {
+      lastDiv.innerHTML = `
+        <button class="btn btn-ghost" onclick="switchMain('grades')">View Full Grades →</button>
+        <button class="btn btn-ghost" onclick="switchPlanner('logan')">Logan's Planner →</button>
+        <button class="btn btn-ghost" onclick="switchPlanner('peyton')">Peyton's Planner →</button>
+      `;
+    }
+  }
 }
 
 /* ═══════════════════════════════════════════════
