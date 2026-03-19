@@ -678,7 +678,8 @@ a { color: inherit; text-decoration: none; }
   <button class="nav-tab active" id="nt-home"     onclick="switchMain('home')">🏠 Home</button>
   <button class="nav-tab"        id="nt-grades"   onclick="switchMain('grades')">📊 Grades</button>
   <div class="nav-sep"></div>
-  <button class="nav-tab"        id="nt-planner"  onclick="switchMain('planner')">📅 Logan's Planner</button>
+  <button class="nav-tab"        id="nt-planner"  onclick="switchPlanner('logan')">📅 Logan's Planner</button>
+  <button class="nav-tab"        id="nt-planner2" onclick="switchPlanner('peyton')">📅 Peyton's Planner</button>
   <div class="nav-right">
     <span class="cloud-badge warn" id="cloud-status">● Local Only</span>
   </div>
@@ -736,14 +737,15 @@ a { color: inherit; text-decoration: none; }
 
         <!-- Planner summary -->
         <div class="overview-card">
-          <div class="ov-card-title">📅 Logan's Week</div>
+        <div class="ov-card-title">📅 Logan's Week</div>
           <div id="ov-planner-mini"></div>
         </div>
       </div>
 
       <div style="display:flex;gap:10px;">
         <button class="btn btn-ghost" onclick="switchMain('grades')">View Full Grades →</button>
-        <button class="btn btn-ghost" onclick="switchMain('planner')">Open Planner →</button>
+        <button class="btn btn-ghost" onclick="switchPlanner('logan')">Logan's Planner →</button>
+        <button class="btn btn-ghost" onclick="switchPlanner('peyton')">Peyton's Planner →</button>
       </div>
     </div>
   </div>
@@ -822,7 +824,7 @@ a { color: inherit; text-decoration: none; }
         <button class="sb-item active"><span class="ic">📅</span> Planner</button>
       </div>
       <div>
-        <div class="sb-label">Logan's Planner</div>
+        <div class="sb-label" id="planner-sidebar-label">Logan's Planner</div>
         <button class="sb-item active" id="pn-schedule"    onclick="showPlannerTab('schedule')"><span class="ic">📅</span> Schedule</button>
         <button class="sb-item"        id="pn-assignments" onclick="showPlannerTab('assignments')"><span class="ic">📝</span> Assignments <span class="sb-badge warn" id="pb-due">0</span></button>
         <button class="sb-item"        id="pn-exams"       onclick="showPlannerTab('exams')"><span class="ic">🎯</span> Exams <span class="sb-badge danger" id="pb-exams">0</span></button>
@@ -849,7 +851,7 @@ a { color: inherit; text-decoration: none; }
       <!-- SCHEDULE TAB -->
       <div id="ptab-schedule">
         <div class="sec-header">
-          <div><div class="sec-title">Weekly Schedule</div><div class="sec-sub">Logan's class timetable</div></div>
+          <div><div class="sec-title" id="planner-schedule-title">Weekly Schedule</div><div class="sec-sub" id="planner-schedule-sub">Logan's class timetable</div></div>
           <div class="sec-actions"><button class="btn btn-primary btn-sm" onclick="openPlannerModal('class')">+ Add Class</button></div>
         </div>
         <div class="week-nav">
@@ -973,13 +975,21 @@ function scolor(s) { return SCOLORS[sc(s)]; }
 ═══════════════════════════════════════════════ */
 const GKEY = 'ehs_grades_v2';
 const PKEY = 'ehs_planner_v2';
+const PKEY2 = 'ehs_planner_peyton_v2';
 const FBURL = 'https://school-tracker-7e84c-default-rtdb.firebaseio.com';
 
-let gradesData = {};  // { studentId: { studentName, courses:[] } }
+let gradesData = {};
 let activeStudent = null;
 let detailCourse = null;
+let activePlanner = 'logan'; // 'logan' or 'peyton'
 
-let planner = { assignments:[], exams:[], classes:[] };
+let planners = {
+  logan:  { assignments:[], exams:[], classes:[] },
+  peyton: { assignments:[], exams:[], classes:[] }
+};
+
+// Active planner shortcut
+let planner = planners.logan;
 let plannerFilter = 'all';
 let weekOffset = 0;
 let pmType = 'assignment';
@@ -994,20 +1004,26 @@ function saveGrades() {
   fbSet('grades', gradesData);
 }
 function savePlanner() {
-  localStorage.setItem(PKEY, JSON.stringify(planner));
-  fbSet('planner', planner);
+  const key = activePlanner === 'peyton' ? PKEY2 : PKEY;
+  localStorage.setItem(key, JSON.stringify(planner));
+  fbSet('planner_' + activePlanner, planner);
   updatePlannerBadges();
 }
 
 function loadAll() {
   const g = localStorage.getItem(GKEY);
   const p = localStorage.getItem(PKEY);
+  const p2 = localStorage.getItem(PKEY2);
   if (g) try { gradesData = JSON.parse(g); } catch(e) {}
-  if (p) try { planner = JSON.parse(p); } catch(e) {}
-  if (!planner.assignments) planner.assignments = [];
-  if (!planner.exams) planner.exams = [];
-  if (!planner.classes) planner.classes = [];
-  if (!Object.keys(gradesData).length && !planner.assignments.length) seedAll();
+  if (p) try { planners.logan = JSON.parse(p); } catch(e) {}
+  if (p2) try { planners.peyton = JSON.parse(p2); } catch(e) {}
+  for (const k of ['logan','peyton']) {
+    if (!planners[k].assignments) planners[k].assignments = [];
+    if (!planners[k].exams) planners[k].exams = [];
+    if (!planners[k].classes) planners[k].classes = [];
+  }
+  planner = planners.logan;
+  if (!Object.keys(gradesData).length && !planners.logan.assignments.length) seedAll();
 }
 
 function fbSet(path, data) {
@@ -1088,8 +1104,8 @@ function seedAll() {
     ]
   };
 
-  // planner seed
-  planner.classes = [
+  // planner seed — Logan only, Peyton starts fresh
+  planners.logan.classes = [
     {id:'c1',name:'English Literature',subject:'English',day:0,startHour:8,startMin:0,endHour:9,endMin:0},
     {id:'c2',name:'Algebra II',subject:'Math',day:0,startHour:9,startMin:30,endHour:10,endMin:30},
     {id:'c3',name:'Biology',subject:'Science',day:1,startHour:8,startMin:0,endHour:9,endMin:30},
@@ -1101,14 +1117,14 @@ function seedAll() {
     {id:'c9',name:'World History',subject:'Social Studies',day:4,startHour:10,startMin:0,endHour:11,endMin:0},
     {id:'c10',name:'English Literature',subject:'English',day:4,startHour:8,startMin:0,endHour:9,endMin:0},
   ];
-  planner.assignments = [
+  planners.logan.assignments = [
     {id:'a1',name:'Ch.4 Reading Response — The Great Gatsby',subject:'English',dueDate:ad(-1),type:'Homework',completed:false},
     {id:'a2',name:'Polynomial Functions Problem Set',subject:'Math',dueDate:ad(2),type:'Homework',completed:false},
     {id:'a3',name:'Cell Division Lab Report',subject:'Science',dueDate:ad(4),type:'Lab Report',completed:false},
     {id:'a4',name:'WWI Primary Sources Essay',subject:'Social Studies',dueDate:ad(7),type:'Essay',completed:false},
     {id:'a5',name:'Vocab Quiz Ch.12',subject:'English',dueDate:ad(1),type:'Quiz Prep',completed:true},
   ];
-  planner.exams = [
+  planners.logan.exams = [
     {id:'e1',name:'Algebra II Unit 3 Test',subject:'Math',date:ad(5),notes:'Ch.7-9, Polynomials'},
     {id:'e2',name:'Biology Midterm',subject:'Science',date:ad(14),notes:'Cell biology, genetics'},
     {id:'e3',name:'English Literature Essay Exam',subject:'English',date:ad(21),notes:'Gatsby themes'},
@@ -1129,10 +1145,32 @@ function switchMain(p) {
     const nt = document.getElementById('nt-'+x);
     if (nt) nt.classList.toggle('active', x===p);
   });
+  // clear planner nav highlights when not on planner
+  document.getElementById('nt-planner').classList.toggle('active', p==='planner' && activePlanner==='logan');
+  document.getElementById('nt-planner2').classList.toggle('active', p==='planner' && activePlanner==='peyton');
   currentMain = p;
   if (p==='home')    renderHome();
   if (p==='grades')  renderGrades();
   if (p==='planner') { renderSchedule(); renderPlannerTab(); }
+}
+
+function switchPlanner(who) {
+  activePlanner = who;
+  planner = planners[who];
+  // update UI labels
+  const name = who === 'peyton' ? "Peyton" : "Logan";
+  document.getElementById('planner-sidebar-label').textContent = name + "'s Planner";
+  document.getElementById('planner-schedule-sub').textContent = name + "'s class timetable";
+  // nav highlights
+  document.getElementById('nt-planner').classList.toggle('active', who==='logan');
+  document.getElementById('nt-planner2').classList.toggle('active', who==='peyton');
+  // switch to planner page
+  ['home','grades'].forEach(x => document.getElementById('page-'+x).classList.remove('active'));
+  document.getElementById('page-planner').classList.add('active');
+  currentMain = 'planner';
+  updatePlannerBadges();
+  renderSchedule();
+  renderPlannerTab();
 }
 
 /* ═══════════════════════════════════════════════
@@ -1666,7 +1704,8 @@ function toast(msg){
 ═══════════════════════════════════════════════ */
 function initFirebase(){
   fbGet('grades', d=>{gradesData=d;renderHome();renderGrades();});
-  fbGet('planner',d=>{planner=d;updatePlannerBadges();});
+  fbGet('planner_logan', d=>{planners.logan=d; if(activePlanner==='logan'){planner=d;updatePlannerBadges();}});
+  fbGet('planner_peyton', d=>{planners.peyton=d; if(activePlanner==='peyton'){planner=d;updatePlannerBadges();}});
 }
 
 /* ═══════════════════════════════════════════════
