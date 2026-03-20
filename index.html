@@ -697,7 +697,8 @@ a { color: inherit; text-decoration: none; }
       </div>
       <div>
         <div class="sb-label">Students</div>
-        <div id="sb-students-home"></div>
+        <button class="sb-item" onclick="selectStudent('logan');switchMain('grades')"><span class="ic">👤</span> Logan</button>
+        <button class="sb-item" onclick="selectStudent('peyton');switchMain('grades')"><span class="ic">👤</span> Peyton</button>
       </div>
     </aside>
     <div class="main-content">
@@ -763,7 +764,8 @@ a { color: inherit; text-decoration: none; }
       </div>
       <div>
         <div class="sb-label">Students</div>
-        <div id="sb-students-grades"></div>
+        <div id="sb-students-grades"><button class="sb-item" onclick="selectStudent('logan')"><span class="ic">👤</span> Logan</button>
+        <button class="sb-item" onclick="selectStudent('peyton')"><span class="ic">👤</span> Peyton</button></div>
       </div>
       <div style="margin-top:auto;">
         <button class="sb-item" onclick="openGradesImport()"><span class="ic">⬆</span> Import Data</button>
@@ -1198,11 +1200,8 @@ function renderHome() {
   document.getElementById('hs-avg').textContent = avgGrade;
   document.getElementById('hs-tasks').textContent = loganTasks + peytonTasks;
 
-  // sidebar students
-  const sbH = document.getElementById('sb-students-home');
-  sbH.innerHTML = Object.values(gradesData).map(sd =>
-    `<button class="sb-item" onclick="switchMain('grades')">${sd.studentName}</button>`
-  ).join('');
+  // sidebar students - hardcoded in HTML, just highlight active
+  document.querySelectorAll('#page-home .sidebar .sb-item').forEach(el => el.classList.remove('active'));
 
   // helper: mini course list
   const miniCourses = (sd) => (sd.courses||[]).slice(0,5).map(c => {
@@ -1288,10 +1287,11 @@ function renderGrades() {
     `<button class="student-tab ${id===activeStudent?'active':''}" onclick="selectStudent('${id}')">${gradesData[id].studentName}</button>`
   ).join('');
 
-  // sidebar
-  document.getElementById('sb-students-grades').innerHTML = students.map(id =>
-    `<button class="sb-item ${id===activeStudent?'active':''}" onclick="selectStudent('${id}')">${gradesData[id].studentName}</button>`
-  ).join('');
+  // sidebar - update active state on hardcoded buttons
+  document.querySelectorAll('#sb-students-grades .sb-item').forEach((btn, i) => {
+    const ids = ['logan','peyton'];
+    btn.classList.toggle('active', ids[i] === activeStudent);
+  });
 
   if (!students.length) {
     document.getElementById('grade-body').innerHTML = `<div class="empty"><div class="empty-icon">🎓</div><div class="empty-title">No data yet</div><div class="empty-sub">Import from LearnStage or load demo data.</div></div>`;
@@ -1722,9 +1722,44 @@ function initFirebase(){
 /* ═══════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════ */
+// Load local data first for instant render
 loadAll();
 updatePlannerBadges();
 renderHome();
+
+// Then sync from Firebase — Firebase always wins and overwrites local
+function initFirebase(){
+  fbGet('grades', d => {
+    if (d && Object.keys(d).length) {
+      gradesData = d;
+      localStorage.setItem(GKEY, JSON.stringify(gradesData));
+      renderHome();
+      if (document.getElementById('page-grades').classList.contains('active')) renderGrades();
+    }
+  });
+  fbGet('planner_logan', d => {
+    if (d) {
+      planners.logan = d;
+      if (!planners.logan.assignments) planners.logan.assignments = [];
+      if (!planners.logan.exams) planners.logan.exams = [];
+      if (!planners.logan.classes) planners.logan.classes = [];
+      localStorage.setItem(PKEY, JSON.stringify(planners.logan));
+      if (activePlanner === 'logan') { planner = planners.logan; updatePlannerBadges(); }
+      renderHome();
+    }
+  });
+  fbGet('planner_peyton', d => {
+    if (d) {
+      planners.peyton = d;
+      if (!planners.peyton.assignments) planners.peyton.assignments = [];
+      if (!planners.peyton.exams) planners.peyton.exams = [];
+      if (!planners.peyton.classes) planners.peyton.classes = [];
+      localStorage.setItem(PKEY2, JSON.stringify(planners.peyton));
+      if (activePlanner === 'peyton') { planner = planners.peyton; updatePlannerBadges(); }
+      renderHome();
+    }
+  });
+}
 initFirebase();
 </script>
 </body>
