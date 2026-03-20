@@ -1292,6 +1292,11 @@ function renderGrades() {
     const ids = ['logan','peyton'];
     btn.classList.toggle('active', ids[i] === activeStudent);
   });
+  // also update home sidebar
+  document.querySelectorAll('#page-home .sidebar .sb-item[onclick*="selectStudent"]').forEach(btn => {
+    const id = btn.getAttribute('onclick').match(/selectStudent\('(\w+)'\)/)?.[1];
+    btn.classList.toggle('active', id === activeStudent);
+  });
 
   if (!students.length) {
     document.getElementById('grade-body').innerHTML = `<div class="empty"><div class="empty-icon">🎓</div><div class="empty-title">No data yet</div><div class="empty-sub">Import from LearnStage or load demo data.</div></div>`;
@@ -1714,9 +1719,21 @@ function toast(msg){
    FIREBASE SYNC (optional)
 ═══════════════════════════════════════════════ */
 function initFirebase(){
-  fbGet('grades', d=>{gradesData=d;renderHome();renderGrades();});
-  fbGet('planner_logan', d=>{planners.logan=d; if(activePlanner==='logan'){planner=d;updatePlannerBadges();}});
-  fbGet('planner_peyton', d=>{planners.peyton=d; if(activePlanner==='peyton'){planner=d;updatePlannerBadges();}});
+  fbGet('grades', d=>{
+    gradesData=d;
+    if(currentMain==='home') renderHome();
+    if(currentMain==='grades') renderGrades();
+  });
+  fbGet('planner_logan', d=>{
+    planners.logan=d;
+    if(activePlanner==='logan'){ planner=d; updatePlannerBadges(); }
+    if(currentMain==='home') renderHome();
+  });
+  fbGet('planner_peyton', d=>{
+    planners.peyton=d;
+    if(activePlanner==='peyton'){ planner=d; updatePlannerBadges(); }
+    if(currentMain==='home') renderHome();
+  });
 }
 
 /* ═══════════════════════════════════════════════
