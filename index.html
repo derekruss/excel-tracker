@@ -773,6 +773,7 @@ function renderGrades(){
  if(!students.length){document.getElementById('grade-body').innerHTML=`<div class="empty"><div class="empty-icon">🎓</div><div class="empty-title">No data yet</div><div class="empty-sub">Import from LearnStage or load demo data.</div></div>`;document.getElementById('grade-stats').style.display='none';document.getElementById('import-strip').style.display='flex';return;}
  const sd=gradesData[activeStudent];if(!sd)return;
  document.getElementById('grades-title').textContent=`${sd.studentName}'s Grades`;
+ document.getElementById('grades-sub').textContent=sd.scrapedAt?`Last synced: ${new Date(sd.scrapedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}`:'Grade data imported';
  document.getElementById('import-strip').style.display='flex';
  document.getElementById('grade-stats').style.display='grid';
  let done=0,total=0,gradeSum=0,gradeCount=0;
@@ -794,7 +795,11 @@ function renderCourseGrid(sd){
  const pct=total?Math.round(done/total*100):0;
  const g=c.currentGrade||0;
  const gClass=g>=90?'grade-A':g>=80?'grade-B':g>=70?'grade-C':g>=60?'grade-D':g?'grade-F':'grade-NA';
- return`<div class="course-card" onclick="openCourseDetail(${i})" style="border-top:3px solid ${col}"><div class="course-card-top"><div><div class="course-name">${c.name}</div><div class="course-code">${c.code||''}</div></div><div class="course-grade"><div class="grade-val ${gClass}">${g||'—'}</div><div class="grade-label">Grade</div></div></div><div class="progress-bg"><div class="progress-fill" style="width:${pct}%;background:${col}"></div></div><div class="progress-meta"><span>${done} of ${total} done</span><span>${pct}%</span></div><div class="course-footer"><span class="subject-tag bc-${csc} tc-${csc}">${c.subject}</span><span class="remaining-badge">${total-done} remaining</span></div></div>`;
+ const modParts=c.moduleProgress?c.moduleProgress.split('/').map(Number):null;
+ const modDone=modParts?modParts[0]:null,modTotal=modParts?modParts[1]:null;
+ const modPct=modParts&&modTotal?Math.round(modDone/modTotal*100):null;
+ const modBar=modPct!==null?`<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:3px;"><span>MODULE PROGRESS</span><span style="font-weight:600;color:var(--text)">${modDone}/${modTotal} modules</span></div><div class="progress-bg"><div class="progress-fill" style="width:${modPct}%;background:${col};opacity:0.5;"></div></div></div>`:'';
+ return`<div class="course-card" onclick="openCourseDetail(${i})" style="border-top:3px solid ${col}"><div class="course-card-top"><div><div class="course-name">${c.name}</div><div class="course-code">${c.code||''}</div></div><div class="course-grade"><div class="grade-val ${gClass}">${g||'—'}</div><div class="grade-label">Grade</div></div></div>${modBar}<div class="progress-bg"><div class="progress-fill" style="width:${pct}%;background:${col}"></div></div><div class="progress-meta"><span>✅ ${done}/${total} assignments (${pct}%)</span><span style="color:${total-done>0?'var(--yellow)':'var(--green)'};">${total-done>0?total-done+' remaining':'All done'}</span></div><div class="course-footer"><span class="subject-tag bc-${csc} tc-${csc}">${c.subject}</span><span class="remaining-badge">${c.status||''}</span></div></div>`;
  }).join('');
  document.getElementById('grade-body').innerHTML=`<div class="courses-grid">${html}</div>`;
 }
