@@ -839,7 +839,7 @@ function doGradesImport(){
  data.studentName=normalized;
  const id=normalized.toLowerCase().replace(/\s+/g,'_');
  const existing=gradesData[id];
- if(existing){existing.courses.forEach(ec=>{const nc=data.courses.find(x=>x.name===ec.name);if(!nc)return;ec.sections.forEach((es,si)=>{(es.assignments||[]).forEach((ea,ai)=>{const na=nc.sections?.[si]?.assignments?.[ai];if(na&&ea.completed)na.completed=true;});});});}
+ if(existing){(existing.courses||[]).forEach(ec=>{const nc=data.courses.find(x=>x.name===ec.name);if(!nc)return;(ec.sections||[]).forEach((es,si)=>{(es.assignments||[]).forEach((ea,ai)=>{const na=nc.sections?.[si]?.assignments?.[ai];if(na&&ea.completed)na.completed=true;});});});}
  gradesData[id]=data;activeStudent=id;saveGrades();closeGradesImport();
  document.getElementById('grades-json').value='';
  renderGrades();toast(`Imported ${data.studentName}'s grades ✓`);
