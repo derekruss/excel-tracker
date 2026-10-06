@@ -707,7 +707,6 @@ function loadAll(){
  if(p2)try{planners.peyton=JSON.parse(p2);}catch(e){}
  for(const k of['logan','peyton']){if(!planners[k].assignments)planners[k].assignments=[];if(!planners[k].exams)planners[k].exams=[];if(!planners[k].classes)planners[k].classes=[];}
  planner=planners.logan;
- if(!Object.keys(gradesData).length&&!planners.logan.assignments.length)seedAll();
 }
 
 function fbSet(path,data){try{fetch(`${FBURL}/${path}.json`,{method:'PUT',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}}).then(r=>r.ok&&updateCloudBadge(true)).catch(()=>{});}catch(e){}}
