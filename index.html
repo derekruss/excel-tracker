@@ -548,7 +548,6 @@ a { color: inherit; text-decoration: none; }
  </div>
  <div style="margin-top:auto;">
  <button class="sb-item" onclick="openGradesImport()"><span class="ic">⬆</span> Import Data</button>
- <button class="sb-item" onclick="loadDemoData()" style="color:var(--accent)"><span class="ic">🎭</span> Load Demo</button>
  </div>
  </aside>
  <div class="main-content">
@@ -569,7 +568,7 @@ a { color: inherit; text-decoration: none; }
  <div class="stat-card"><div class="stat-num" style="color:var(--yellow)" id="gs-remain">0</div><div class="stat-label">Remaining</div></div>
  </div>
  <div id="grade-body">
- <div class="empty"><div class="empty-icon">🎓</div><div class="empty-title">No data yet</div><div class="empty-sub">Import from LearnStage or load demo data to get started.</div></div>
+ <div class="empty"><div class="empty-icon">🎓</div><div class="empty-title">No data yet</div><div class="empty-sub">Grades appear after the nightly LearnStage sync.</div></div>
  </div>
  </div>
  </div>
@@ -710,18 +709,9 @@ function loadAll(){
 }
 
 function fbSet(path,data){try{fetch(`${FBURL}/${path}.json`,{method:'PUT',body:JSON.stringify(data),headers:{'Content-Type':'application/json'}}).then(r=>r.ok&&updateCloudBadge(true)).catch(()=>{});}catch(e){}}
-function fbGet(path,cb){fetch(`${FBURL}/${path}.json`).then(r=>r.json()).then(d=>{if(d)cb(d);updateCloudBadge(true);}).catch(()=>updateCloudBadge(false));}
+function fbGet(path,cb){fetch(`${FBURL}/${path}.json`).then(r=>r.json()).then(d=>{cb(d);updateCloudBadge(true);}).catch(()=>updateCloudBadge(false));}
 function updateCloudBadge(ok){const el=document.getElementById('cloud-status');el.textContent=ok?'● Cloud Synced':'● Local Only';el.className='cloud-badge '+(ok?'ok':'warn');}
 
-function seedAll(){
- const today=new Date(),ad=n=>{const d=new Date(today);d.setDate(d.getDate()+n);return d.toISOString().split('T')[0];};
- gradesData['logan']={studentName:'Logan',courses:[{name:'English Literature',code:'ENG-09',subject:'English',currentGrade:87,status:'In Progress',moduleProgress:'4/8',sections:[{name:'Quizzes',assignments:[{name:'Vocab Quiz Ch.10',receivedPoints:18,outOf:20,percentage:'90%',completed:true},{name:'Vocab Quiz Ch.11',receivedPoints:17,outOf:20,percentage:'85%',completed:true},{name:'Vocab Quiz Ch.12',receivedPoints:null,outOf:20,percentage:null,completed:false}]},{name:'Essays',assignments:[{name:'Descriptive Essay',receivedPoints:43,outOf:50,percentage:'86%',completed:true},{name:'Gatsby Analysis',receivedPoints:null,outOf:50,percentage:null,completed:false}]}]},{name:'Algebra II',code:'MATH-11',subject:'Math',currentGrade:92,status:'In Progress',moduleProgress:'5/10',sections:[{name:'Homework',assignments:[{name:'Polynomial Functions',receivedPoints:null,outOf:20,percentage:null,completed:false},{name:'Rational Expressions',receivedPoints:19,outOf:20,percentage:'95%',completed:true}]},{name:'Tests',assignments:[{name:'Unit 2 Test',receivedPoints:90,outOf:100,percentage:'90%',completed:true},{name:'Unit 3 Test',receivedPoints:null,outOf:100,percentage:null,completed:false}]}]}]};
- planners.logan.classes=[{id:'c1',name:'English Literature',subject:'English',day:0,startHour:8,startMin:0,endHour:9,endMin:0},{id:'c2',name:'Algebra II',subject:'Math',day:0,startHour:9,startMin:30,endHour:10,endMin:30}];
- planners.logan.assignments=[{id:'a1',name:'Ch.4 Reading Response',subject:'English',dueDate:ad(-1),type:'Homework',completed:false},{id:'a2',name:'Polynomial Functions Problem Set',subject:'Math',dueDate:ad(2),type:'Homework',completed:false}];
- planners.logan.exams=[{id:'e1',name:'Algebra II Unit 3 Test',subject:'Math',date:ad(5),notes:'Ch.7-9'}];
- activeStudent='logan';
- saveGrades();savePlanner();
-}
 
 function switchMain(p){
  ['home','grades','planner'].forEach(x=>{document.getElementById('page-'+x).classList.toggle('active',x===p);const nt=document.getElementById('nt-'+x);if(nt)nt.classList.toggle('active',x===p);});
@@ -769,7 +759,7 @@ function renderGrades(){
  const students=Object.keys(gradesData);
  if(!activeStudent&&students.length)activeStudent=students[0];
  tabs.innerHTML=students.map(id=>`<button class="student-tab ${id===activeStudent?'active':''}" onclick="selectStudent('${id}')">${gradesData[id].studentName}</button>`).join('');
- if(!students.length){document.getElementById('grade-body').innerHTML=`<div class="empty"><div class="empty-icon">🎓</div><div class="empty-title">No data yet</div><div class="empty-sub">Import from LearnStage or load demo data.</div></div>`;document.getElementById('grade-stats').style.display='none';document.getElementById('import-strip').style.display='flex';return;}
+ if(!students.length){document.getElementById('grade-body').innerHTML=`<div class="empty"><div class="empty-icon">🎓</div><div class="empty-title">No data yet</div><div class="empty-sub">Grades appear after the nightly LearnStage sync.</div></div>`;document.getElementById('grade-stats').style.display='none';document.getElementById('import-strip').style.display='flex';return;}
  const sd=gradesData[activeStudent];if(!sd)return;
  document.getElementById('grades-title').textContent=`${sd.studentName}'s Grades`;
  document.getElementById('grades-sub').textContent=sd.scrapedAt?`Last synced: ${new Date(sd.scrapedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}`:'Grade data imported';
@@ -850,7 +840,6 @@ function doGradesImport(){
  }catch(e){alert('Invalid JSON: '+e.message);}
 }
 
-function loadDemoData(){if(confirm('Load demo data? This will reset grade data.')){gradesData={};planner.assignments=[];planner.exams=[];planner.classes=[];seedAll();renderGrades();toast('Demo data loaded ✓');}}
 
 function showPlannerTab(tab){
  ['schedule','assignments','exams'].forEach(t=>{document.getElementById('ptab-'+t).style.display=t===tab?'':'none';const sb=document.getElementById('pn-'+t);if(sb)sb.classList.toggle('active',t===tab);});
@@ -941,8 +930,8 @@ loadAll();updatePlannerBadges();renderHome();
 
 function initFirebase(){
  fbGet('grades',d=>{if(d&&Object.keys(d).length){gradesData=d;localStorage.setItem(GKEY,JSON.stringify(gradesData));renderHome();if(document.getElementById('page-grades').classList.contains('active'))renderGrades();}});
- fbGet('planner_logan',d=>{if(d){planners.logan=d;if(!planners.logan.assignments)planners.logan.assignments=[];if(!planners.logan.exams)planners.logan.exams=[];if(!planners.logan.classes)planners.logan.classes=[];localStorage.setItem(PKEY,JSON.stringify(planners.logan));if(activePlanner==='logan'){planner=planners.logan;updatePlannerBadges();}renderHome();}});
- fbGet('planner_peyton',d=>{if(d){planners.peyton=d;if(!planners.peyton.assignments)planners.peyton.assignments=[];if(!planners.peyton.exams)planners.peyton.exams=[];if(!planners.peyton.classes)planners.peyton.classes=[];localStorage.setItem(PKEY2,JSON.stringify(planners.peyton));if(activePlanner==='peyton'){planner=planners.peyton;updatePlannerBadges();}renderHome();}});
+ fbGet('planner_logan',d=>{planners.logan=d||{};if(!planners.logan.assignments)planners.logan.assignments=[];if(!planners.logan.exams)planners.logan.exams=[];if(!planners.logan.classes)planners.logan.classes=[];localStorage.setItem(PKEY,JSON.stringify(planners.logan));if(activePlanner==='logan'){planner=planners.logan;updatePlannerBadges();}renderHome();});
+ fbGet('planner_peyton',d=>{planners.peyton=d||{};if(!planners.peyton.assignments)planners.peyton.assignments=[];if(!planners.peyton.exams)planners.peyton.exams=[];if(!planners.peyton.classes)planners.peyton.classes=[];localStorage.setItem(PKEY2,JSON.stringify(planners.peyton));if(activePlanner==='peyton'){planner=planners.peyton;updatePlannerBadges();}renderHome();});
 }
 initFirebase();
 </script>
